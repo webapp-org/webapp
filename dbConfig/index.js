@@ -19,7 +19,6 @@ async function createDatabaseIfNotExists() {
     // Create a MySQL connection
     const connection = await mysql.createPool({
       host: process.env.HOST,
-      port: process.env.MYSQLPORT,
       user: process.env.USERNAME,
       password: process.env.PASSWORD,
     });
