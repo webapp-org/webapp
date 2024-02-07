@@ -15,7 +15,7 @@ registerRouter(app);
 
 db.createDatabaseIfNotExists();
 
-async function startServer() {
+try {
   const databaseAuthenticated = await db.authenticateDatabase();
   if (databaseAuthenticated) {
     const models = [User];
@@ -33,6 +33,6 @@ async function startServer() {
   } else {
     console.error("Database authentication failed.");
   }
+} catch (error) {
+  console.log(error);
 }
-
-startServer();
