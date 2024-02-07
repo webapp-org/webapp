@@ -2,6 +2,7 @@ import express from "express";
 import * as userController from "../controller/user-controller.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import db from "../dbConfig/index.js";
 
 const router = express.Router();
 
@@ -11,6 +12,16 @@ router.use((req, res, next) => {
   next();
 });
 
+// middleware to check db connection
+const checkDBConnection = async (req, res, next) => {
+  try {
+    await db.sequelize.authenticate();
+    next();
+  } catch (error) {
+    res.status(503).send();
+  }
+};
+
 // v1/user path payload and request check middleware
 const validatePostUserPayload = (req, res, next) => {
   // Check if request has query parameters
@@ -19,6 +30,11 @@ const validatePostUserPayload = (req, res, next) => {
   }
   // Check if the request has a body
   if (!req.body || Object.keys(req.body).length === 0) {
+    return res.status(400).json();
+  }
+
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
     return res.status(400).json();
   }
   next();
@@ -87,7 +103,12 @@ const authenticateUser = async (req, res, next) => {
 };
 
 // Post endpoint for user
-router.post("/", validatePostUserPayload, userController.saveUser);
+router.post(
+  "/",
+  validatePostUserPayload,
+  checkDBConnection,
+  userController.saveUser
+);
 // any other end point for post path
 router.all("/", (req, res) => {
   return res.status(405).send();
@@ -99,6 +120,7 @@ router.all("/", (req, res) => {
 router.get(
   "/self",
   validateAuthenticatedUserPayload,
+  checkDBConnection,
   authenticateUser,
   userController.getUser
 );
@@ -107,6 +129,7 @@ router.get(
 router.put(
   "/self",
   validateAuthenticatedUserPayload,
+  checkDBConnection,
   authenticateUser,
   userController.updateUser
 );

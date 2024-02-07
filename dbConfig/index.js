@@ -17,7 +17,7 @@ const sequelize = new Sequelize(
 async function createDatabaseIfNotExists() {
   try {
     // Create a MySQL connection
-    const connection = await mysql.createConnection({
+    const connection = await mysql.createPool({
       host: process.env.HOST,
       port: process.env.MYSQLPORT,
       user: process.env.USERNAME,
@@ -43,7 +43,7 @@ async function authenticateDatabase() {
     return true;
   } catch (error) {
     console.error("Unable to connect to the database:", error);
-    return false;
+    throw new Error("Error in authenticate database");
   }
 }
 

@@ -18,7 +18,6 @@ export const saveUser = async (req, res) => {
       account_updated,
       ...unwantedFields
     } = req.body;
-    console.log("here");
 
     // if unwanted fields are passed
     if (Object.keys(unwantedFields).length > 0) {
@@ -27,7 +26,7 @@ export const saveUser = async (req, res) => {
 
     // if empty fields are passed
     if (!first_name || !last_name || !username || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json();
     }
     // if invalid email is passed
     if (!isValidEmail(username)) {
@@ -46,7 +45,6 @@ export const saveUser = async (req, res) => {
       username,
       password: hashedPassword,
     });
-    console.log("newUser", newUser);
     const { password: pass, ...user } = newUser.dataValues;
     res.status(201).json(user);
   } catch (error) {
@@ -76,7 +74,7 @@ export const updateUser = async (req, res) => {
       user.password = hashedPassword;
     }
     await user.save();
-    res.status(204).json({ message: "User account updated successfully" });
+    res.status(204).json();
   } catch (error) {
     res.status(500).json();
   }
