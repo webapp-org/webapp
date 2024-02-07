@@ -26,6 +26,11 @@ const checkGetRequest = (req, res, next) => {
     return res.status(400).send();
   }
 
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    return res.status(400).json();
+  }
+
   next();
 };
 

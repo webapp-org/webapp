@@ -42,18 +42,18 @@ const validatePostUserPayload = (req, res, next) => {
 
 // v1/user/self path payload and request check middleware
 const validateAuthenticatedUserPayload = (req, res, next) => {
+  if (req.method !== "PUT" && req.method !== "GET") {
+    return res.status(405).json();
+  }
+
   // Check if request has route parameters (query parameters)
   if (Object.keys(req.query).length !== 0) {
-    return res.status(400).json({
-      message: "Route parameters are not allowed for this endpoint",
-    });
+    return res.status(400).json();
   }
 
   if (req.method === "PUT") {
     if (!req.body || Object.keys(req.body).length === 0) {
-      return res.status(400).json({
-        message: "Payload is required",
-      });
+      return res.status(400).json();
     }
   }
 
@@ -74,9 +74,7 @@ const validateAuthenticatedUserPayload = (req, res, next) => {
 const authenticateUser = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Basic ")) {
-    return res
-      .status(401)
-      .json({ message: "Authorization header is missing or invalid" });
+    return res.status(401).json();
   }
 
   // extract the username and password
