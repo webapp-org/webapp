@@ -1,8 +1,8 @@
 import express from "express";
 import * as userController from "../controller/user-controller.js";
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
 import db from "../dbConfig/index.js";
+import bcryptjs from "bcryptjs";
 
 const router = express.Router();
 
@@ -89,9 +89,10 @@ const authenticateUser = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcryptjs.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
+      x;
     }
     req.user = user;
     next();

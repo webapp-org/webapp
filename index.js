@@ -13,26 +13,26 @@ app.use(morgan("dev"));
 //Initialize routes
 registerRouter(app);
 
-db.createDatabaseIfNotExists();
-
-try {
-  const databaseAuthenticated = await db.authenticateDatabase();
-  if (databaseAuthenticated) {
-    const models = [User];
-    // sync db
-    const modelsSynced = await db.syncModels(models);
-    if (modelsSynced) {
-      // start the server
-      const port = process.env.PORT || 4000;
-      app.listen(port, () => {
-        console.log(`Server running successfully on port ${port}`);
-      });
+db.createDatabaseIfNotExists().then(async (res) => {
+  try {
+    const databaseAuthenticated = await db.authenticateDatabase();
+    if (databaseAuthenticated) {
+      const models = [User];
+      // sync db
+      const modelsSynced = await db.syncModels(models);
+      if (modelsSynced) {
+        // start the server
+        const port = process.env.PORT || 4000;
+        app.listen(port, () => {
+          console.log(`Server running successfully on port ${port}`);
+        });
+      } else {
+        console.error("Model synchronization failed.");
+      }
     } else {
-      console.error("Model synchronization failed.");
+      console.error("Database authentication failed.");
     }
-  } else {
-    console.error("Database authentication failed.");
+  } catch (error) {
+    console.log(error);
   }
-} catch (error) {
-  console.log(error);
-}
+});
