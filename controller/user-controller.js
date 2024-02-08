@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 // Function to check valid email
 function isValidEmail(username) {
@@ -38,7 +38,7 @@ export const saveUser = async (req, res) => {
       return res.status(400).json({ message: "User account already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
     const newUser = await User.create({
       first_name,
       last_name,
@@ -70,7 +70,7 @@ export const updateUser = async (req, res) => {
       user.last_name = last_name;
     }
     if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcryptjs.hash(password, 10);
       user.password = hashedPassword;
     }
     await user.save();
