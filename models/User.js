@@ -32,10 +32,6 @@ const User = db.sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    newDate: {
-      type: DataTypes.DATE,
-      defaultValue: new Date(),
-    },
   },
   {
     timestamps: true,
