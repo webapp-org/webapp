@@ -30,12 +30,14 @@ export const saveUser = async (req, res) => {
     }
     // if invalid email is passed
     if (!isValidEmail(username)) {
-      return res.status(400).json({ message: "Invalid email address" });
+      console.error("Invalid email address");
+      return res.status(400).json();
     }
     // if user already exists
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
-      return res.status(400).json({ message: "User account already exists" });
+      console.error("User account already exists");
+      return res.status(400).json();
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -61,7 +63,8 @@ export const updateUser = async (req, res) => {
     }
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      console.error("User not found");
+      return res.status(404).json();
     }
     if (first_name) {
       user.first_name = first_name;
