@@ -63,9 +63,7 @@ const validateAuthenticatedUserPayload = (req, res, next) => {
     req.method === "GET" &&
     ((req.body && Object.keys(req.body).length > 0) || contentLength > 0)
   ) {
-    return res
-      .status(400)
-      .json({ message: "GET request should not have a payload" });
+    return res.status(400).json();
   }
   next();
 };
@@ -87,11 +85,13 @@ const authenticateUser = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      console.error("Invalid Credentials");
+      return res.status(401).json();
     }
     const passwordMatch = await bcryptjs.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      console.error("Invalid Credentials");
+      return res.status(401).json();
       x;
     }
     req.user = user;
