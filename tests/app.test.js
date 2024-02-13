@@ -3,21 +3,21 @@ import app from "../index.js";
 import initializeDatabase from "../dbSetup/dbSetup.js";
 import User from "../models/User.js";
 
+beforeAll(async () => {
+  await initializeDatabase();
+});
+
 // Test 1 - Create an account, and using the GET call, validate account exists.
 describe("POST /v1/user", () => {
   let createdUserId;
   let payload;
-
-  beforeAll(async () => {
-    await initializeDatabase();
-  });
 
   test("Test to create a new user", async () => {
     payload = {
       first_name: "Chinmay",
       last_name: "Gulhane",
       password: "chinmay1234",
-      username: "chinmay1234@gmail.com",
+      username: "chinmay@gmail.com",
     };
 
     // Post request to create a user

@@ -3,7 +3,7 @@ import registerRouter from "./routes/index.js";
 import morgan from "morgan";
 import db from "./dbConfig/index.js";
 import User from "./models/User.js";
-import { initializeDatabase } from "./dbSetup/dbSetup.js";
+import initializeDatabase from "./dbSetup/dbSetup.js";
 
 const app = express();
 
@@ -14,17 +14,14 @@ app.use(morgan("dev"));
 //Initialize routes
 registerRouter(app);
 
-initializeDatabase()
-  .then((result) => {
-    if (result) {
-      const port = process.env.PORT || 4000;
-      app.listen(port, () => {
-        console.log(`Server running successfully on port ${port}`);
-      });
-    }
-  })
-  .catch((error) => {
-    console.error("Error initializing server:", error);
-  });
+const start = async () => {
+  await initializeDatabase();
+};
+start();
+
+const port = process.env.PORT;
+app.listen(port, () => {
+  console.log(`Server running successfully on port ${port}`);
+});
 
 export default app;
