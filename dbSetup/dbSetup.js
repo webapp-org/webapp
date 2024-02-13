@@ -19,37 +19,31 @@ async function initializeDatabase() {
   }
 }
 
-function createDatabaseIfNotExists() {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const connection = await mysql.createPool({
-        host: process.env.HOST,
-        user: process.env.USERNAME,
-        password: process.env.PASSWORD,
-      });
-      await connection.query(
-        `CREATE DATABASE IF NOT EXISTS \`${process.env.DATABASE}\`;`
-      );
-      await connection.end();
-      resolve();
-    } catch (error) {
-      console.error("Error creating database:", error);
-      reject(error);
-    }
-  });
+async function createDatabaseIfNotExists() {
+  try {
+    const connection = await mysql.createConnection({
+      host: process.env.HOST,
+      user: process.env.USERNAME,
+      password: process.env.PASSWORD,
+    });
+    await connection.query(
+      `CREATE DATABASE IF NOT EXISTS \`${process.env.DATABASE}\`;`
+    );
+    await connection.end();
+  } catch (error) {
+    console.error("Error creating database:", error);
+  }
 }
 
-function authenticateDatabase() {
-  return new Promise(async (resolve, reject) => {
-    try {
-      await db.sequelize.authenticate();
-      console.log("Connection to the database successful.");
-      resolve(true);
-    } catch (error) {
-      console.error("Unable to connect to the database:", error);
-      reject(new Error("Error in authenticate database"));
-    }
-  });
+async function authenticateDatabase() {
+  try {
+    await db.sequelize.authenticate();
+    console.log("Connection to the database successful.");
+    return true;
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+    throw new Error("Error in authenticate database");
+  }
 }
 
 async function syncModels(models = []) {
@@ -63,4 +57,4 @@ async function syncModels(models = []) {
   }
 }
 
-export { initializeDatabase };
+export default initializeDatabase;
