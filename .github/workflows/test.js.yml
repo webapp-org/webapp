@@ -23,9 +23,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # Command to echo hello world
-    - name: Run hello world
-      run: echo Hello, world!
+    # Command to start sql instance      
+    - name: Start Sql instance
+      run: sudo systemctl start mysql.service
 
     # Command to install node
     - name: Use Node.js ${{ matrix.node-version }}
