@@ -4,6 +4,13 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env: 
+  MYSQL_HOST: ${{ secrets.HOST }}
+  MYSQL_PORT: ${{ secrets.PORT }}
+  MYSQL_USER: ${{ secrets.USERNAME }}
+  MYSQL_PASSWORD: ${{ secrets.PASSWORD }}
+  MYSQL_DATABASE: ${{ secrets.DATABASE }}
+
 jobs:
   build:
 
@@ -32,5 +39,5 @@ jobs:
       run: npm ci
 
     # Command to run test cases
-    - name: Run test cases  
+    - name: Run Integration Tests  
       run: npm test
