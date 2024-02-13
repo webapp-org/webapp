@@ -7,7 +7,7 @@ on:
 env: 
   HOST: ${{ secrets.HOST }}
   PORT: ${{ secrets.PORT }}
-  USER: ${{ secrets.USERNAME }}
+  USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
   DATABASE: ${{ secrets.DATABASE }}
 
