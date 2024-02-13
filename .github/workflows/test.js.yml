@@ -5,11 +5,11 @@ on:
     branches: [ "main" ]
 
 env: 
-  MYSQL_HOST: ${{ secrets.HOST }}
-  MYSQL_PORT: ${{ secrets.PORT }}
-  MYSQL_USER: ${{ secrets.USERNAME }}
-  MYSQL_PASSWORD: ${{ secrets.PASSWORD }}
-  MYSQL_DATABASE: ${{ secrets.DATABASE }}
+  HOST: ${{ secrets.HOST }}
+  PORT: ${{ secrets.PORT }}
+  USER: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  DATABASE: ${{ secrets.DATABASE }}
 
 jobs:
   build:
