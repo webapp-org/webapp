@@ -8,11 +8,11 @@ beforeAll(async () => {
 });
 
 // Test 1 - Create an account, and using the GET call, validate account exists.
-describe("POST /v1/user", () => {
+describe("Integration Tests", () => {
   let createdUserId;
   let payload;
 
-  test("Test to create a new user", async () => {
+  test("Test 1 - Create an account, and using the GET call, validate account exists.", async () => {
     payload = {
       first_name: "Chinmay",
       last_name: "Gulhane",
@@ -29,9 +29,8 @@ describe("POST /v1/user", () => {
     expect(response.status).toBe(201);
     createdUserId = response.body.id;
     expect(response.body).toHaveProperty("id");
-  });
 
-  test("Test to retrieve created user", async () => {
+    // Get request to verify user
     const authHeader =
       "Basic " +
       Buffer.from(`${payload.username}:${payload.password}`).toString("base64");
@@ -51,5 +50,43 @@ describe("POST /v1/user", () => {
     );
     expect(getUserResponse.body).toHaveProperty("last_name", payload.last_name);
     expect(getUserResponse.body).toHaveProperty("username", payload.username);
+  });
+
+  test("Test 2: Update the user account and validate the account was updated", async () => {
+    const updatePayload = {
+      first_name: "Ashish",
+      last_name: "Kumar",
+      password: "ashish1234",
+    };
+
+    let authToken =
+      "Basic " +
+      Buffer.from(`${payload.username}:${payload.password}`).toString("base64");
+
+    // Put request to update user account
+    const updateResponse = await supertest(app)
+      .put("/v1/user/self")
+      .send(updatePayload)
+      .set("Accept", "application/json")
+      .set("Authorization", authToken);
+
+    expect(updateResponse.status).toBe(204);
+
+    authToken =
+      "Basic " +
+      Buffer.from(`${payload.username}:${updatePayload.password}`).toString(
+        "base64"
+      );
+
+    // Get request to check updated user
+    const getUserResponse = await supertest(app)
+      .get("/v1/user/self")
+      .set("Authorization", authToken);
+
+    expect(getUserResponse.status).toBe(200);
+
+    // Check if the retrieved user object has been updated with the new values
+    expect(getUserResponse.body.first_name).toBe(updatePayload.first_name);
+    expect(getUserResponse.body.last_name).toBe(updatePayload.last_name);
   });
 });
