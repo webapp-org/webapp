@@ -19,6 +19,13 @@ build {
 
   sources = ["source.googlecompute.image"]
 
+  provisioner "shell" {
+    inline = [
+      "sudo yum install -y zip"
+    ]
+  }
+
+
   provisioner "file" {
     source      = "script/script.sh"
     destination = "/tmp/script.sh"
