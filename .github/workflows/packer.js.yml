@@ -44,7 +44,7 @@ jobs:
 
       # Copy the zip artifact to Packer build directory
       - name: Copy Artifact to Packer
-        run: mv myapp.zip packer/
+        run: cp myapp.zip packer/
 
       # Command to build packer
       - name: Build Packer
