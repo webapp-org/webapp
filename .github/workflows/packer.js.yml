@@ -14,6 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Command to create zip file of project
+      - name: Create Zip Artifact
+        run: zip -r myapp.zip .
+
       # Command to init packer
       - name: Init Packer
         run: packer init packer/packer-gcp.pkr.hcl
@@ -37,6 +41,10 @@ jobs:
 
       - name: Gcloud CLI
         run: gcloud info
+
+      # Copy the zip artifact to Packer build directory
+      - name: Copy Artifact to Packer
+        run: mv myapp.zip packer/
 
       # Command to build packer
       - name: Build Packer

@@ -15,6 +15,6 @@ sudo yum install -y nodejs
 
 # Install unzip and unzip the assignment folder
 sudo yum install unzip
-unzip Chinmay_Gulhane_002831871_02-1.zip 
+# unzip Chinmay_Gulhane_002831871_02-1.zip 
 
 echo "Dependencies installed successfully."
