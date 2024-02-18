@@ -43,8 +43,8 @@ jobs:
         run: gcloud info
 
       # Copy the zip artifact to Packer build directory
-      - name: Copy Artifact to Packer
-        run: cp myapp.zip packer/
+      # - name: Copy Artifact to Packer
+      #   run: cp myapp.zip packer/
 
       # Command to build packer
       - name: Build Packer
