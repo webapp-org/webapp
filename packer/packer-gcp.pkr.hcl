@@ -32,8 +32,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "myapp.zip"
-    destination = "/tmp/myapp.zip"
+    source      = "webapp.zip"
+    destination = "/tmp/webapp.zip"
   }
 
   provisioner "shell" {
@@ -44,8 +44,8 @@ build {
       "sudo chmod +x /home/script.sh",
       "/home/script.sh",
 
-      "sudo mv /tmp/myapp.zip /home/myapp.zip",
-      "sudo unzip /home/myapp.zip -d /home/myapp",
+      "sudo mv /tmp/webapp.zip /home/webapp.zip",
+      "sudo unzip /home/webapp.zip -d /home/webapp",
     ]
   }
 }

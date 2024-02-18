@@ -16,7 +16,7 @@ jobs:
 
       # Command to create zip file of project
       - name: Create Zip Artifact
-        run: zip -r myapp.zip .
+        run: zip -r webapp.zip .
 
       # Command to init packer
       - name: Init Packer
@@ -41,10 +41,6 @@ jobs:
 
       - name: Gcloud CLI
         run: gcloud info
-
-      # Copy the zip artifact to Packer build directory
-      # - name: Copy Artifact to Packer
-      #   run: cp myapp.zip packer/
 
       # Command to build packer
       - name: Build Packer
