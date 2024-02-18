@@ -24,11 +24,19 @@ build {
     destination = "/tmp/script.sh"
   }
 
+  provisioner "file" {
+    source      = "myapp.zip"
+    destination = "/tmp/myapp.zip"
+  }
+
   provisioner "shell" {
     inline = [
       "sudo mv /tmp/script.sh /home/script.sh",
       "sudo chmod +x /home/script.sh",
       "/home/script.sh",
+
+      "sudo mv /tmp/myapp.zip /home/myapp.zip",
+      "sudo unzip /home/myapp.zip -d /home/myapp",
     ]
   }
 }
