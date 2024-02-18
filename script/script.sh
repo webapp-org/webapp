@@ -14,8 +14,7 @@ curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
 sudo yum install -y nodejs
 
 # Install unzip and unzip the assignment folder
-sudo yum install unzip
-sudo yum install zip
+sudo yum install -y zip unzip
 # unzip Chinmay_Gulhane_002831871_02-1.zip 
 
 echo "Dependencies installed successfully."
