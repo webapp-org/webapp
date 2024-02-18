@@ -38,7 +38,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225",
+      # "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225",
 
       "sudo mv /tmp/script.sh /home/script.sh",
       "sudo chmod +x /home/script.sh",
