@@ -40,4 +40,4 @@ jobs:
 
       # Command to build packer
       - name: Build Packer
-        run: packer build packer/gcp.pkr.hcl
+        run: packer build packer/packer-gcp.pkr.hcl
