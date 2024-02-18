@@ -20,7 +20,7 @@ jobs:
 
       # Command to check packer format
       - name: Check Packer Format
-        run: packer fmt -check acker/packer-gcp.pkr.hcl
+        run: packer fmt -check packer/packer-gcp.pkr.hcl
 
       # Command to validate packer
       - name: Validate Packer
