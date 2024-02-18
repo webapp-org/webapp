@@ -19,11 +19,11 @@ build {
 
   sources = ["source.googlecompute.image"]
 
-  provisioner "shell" {
-    inline = [
-      "sudo yum install -y zip"
-    ]
-  }
+  # provisioner "shell" {
+  #   inline = [
+  #     "sudo yum install -y zip"
+  #   ]
+  # }
 
 
   provisioner "file" {
@@ -38,6 +38,8 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225",
+
       "sudo mv /tmp/script.sh /home/script.sh",
       "sudo chmod +x /home/script.sh",
       "/home/script.sh",
