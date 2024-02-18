@@ -19,11 +19,6 @@ build {
 
   sources = ["source.googlecompute.image"]
 
-  # provisioner "shell" {
-  #   inline = [
-  #     "sudo yum install -y zip"
-  #   ]
-  # }
 
 
   provisioner "file" {
@@ -46,6 +41,8 @@ build {
 
       "sudo mv /tmp/webapp.zip /home/webapp.zip",
       "sudo unzip /home/webapp.zip -d /home/webapp",
+
+      "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225"
     ]
   }
 }
