@@ -34,7 +34,9 @@ build {
   provisioner "shell" {
     inline = [
 
-
+      "sudo groupadd csye6225",
+      "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225"
+      
       "sudo mv /tmp/script.sh /home/script.sh",
       # set ownership
       "sudo chown csye6225:csye6225 /home/script.sh",
@@ -46,8 +48,6 @@ build {
       "sudo chown csye6225:csye6225 /home/webapp.zip",
       "sudo unzip /home/webapp.zip -d /home/webapp",
 
-      "sudo groupadd csye6225",
-      "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225"
     ]
   }
 }
