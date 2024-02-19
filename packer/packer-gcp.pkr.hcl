@@ -36,10 +36,14 @@ build {
 
 
       "sudo mv /tmp/script.sh /home/script.sh",
+      # set ownership
+      "sudo chown csye6225:csye6225 /home/script.sh",
       "sudo chmod +x /home/script.sh",
       "/home/script.sh",
 
       "sudo mv /tmp/webapp.zip /home/webapp.zip",
+      # set ownership
+      "sudo chown csye6225:csye6225 /home/webapp.zip",
       "sudo unzip /home/webapp.zip -d /home/webapp",
 
       "sudo groupadd csye6225",
