@@ -1,0 +1,11 @@
+[Unit]
+Description=MySQL Database
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/mysql -f
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
