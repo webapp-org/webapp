@@ -32,10 +32,10 @@ build {
     generated   = true
   }
 
-  provisioner "file" {
-    source      = "mysql.service"
-    destination = "/etc/systemd/system/mysql.service"
-  }
+  # provisioner "file" {
+  #   source      = "mysql.service"
+  #   destination = "/etc/systemd/system/mysql.service"
+  # }
 
   provisioner "shell" {
     inline = [
@@ -55,6 +55,7 @@ build {
       "sudo unzip /home/webapp.zip -d /home/webapp",
 
 
+      "sudo mv mysql.service /etc/systemd/system/mysql.service",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable mysql.service",
       "sudo systemctl start mysql.service"
