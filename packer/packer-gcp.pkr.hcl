@@ -32,6 +32,11 @@ build {
     generated   = true
   }
 
+  provisioner "file" {
+    source      = "mysql.service"
+    destination = "/etc/systemd/system/mysql.service"
+  }
+
   provisioner "shell" {
     inline = [
 
@@ -48,6 +53,11 @@ build {
       # set ownership
       "sudo chown csye6225:csye6225 /home/webapp.zip",
       "sudo unzip /home/webapp.zip -d /home/webapp",
+
+
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable mysql.service",
+      "sudo systemctl start mysql.service"
 
     ]
   }
