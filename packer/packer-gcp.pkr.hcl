@@ -29,6 +29,7 @@ build {
   provisioner "file" {
     source      = "webapp.zip"
     destination = "/tmp/webapp.zip"
+    generated   = true
   }
 
   provisioner "shell" {
