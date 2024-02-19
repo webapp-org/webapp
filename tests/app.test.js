@@ -7,6 +7,8 @@ beforeAll(async () => {
   await initializeDatabase();
 });
 
+// Successfull PR
+
 // Test 1 - Create an account, and using the GET call, validate account exists.
 describe("Integration Tests", () => {
   let createdUserId;
