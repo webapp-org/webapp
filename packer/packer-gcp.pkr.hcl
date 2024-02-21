@@ -37,31 +37,19 @@ build {
     destination = "/tmp/app.service"
   }
 
+  # Script to install dependecies 
   provisioner "shell" {
-    inline = [
-
-      "sudo adduser csye6225 --shell /usr/sbin/nologin",
-
-      "sudo mv /tmp/script.sh /home/script.sh",
-      # set ownership
-      "sudo chown csye6225:csye6225 /home/script.sh",
-      "sudo chmod +x /home/script.sh",
-      "/home/script.sh",
-
-      "sudo mv /tmp/webapp.zip /home/webapp.zip",
-      # set ownership
-      "sudo chown csye6225:csye6225 /home/webapp.zip",
-      "sudo unzip /home/webapp.zip -d /home/webapp",
-      "sudo chown -R csye6225:csye6225 /home/webapp",
-
-
-
-      # move and run the service
-      "sudo systemctl enable mysqld.service",
-      "sudo mv /tmp/app.service /etc/systemd/system/app.service",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable app.service",
-
-    ]
+    script = "packer/scripts/setup.sh"
   }
+
+  # Script to move project and set up ownership
+  provisioner "shell" {
+    script = "packer/scripts/move_app.sh"
+  }
+
+  # Script to start services
+  provisioner "shell" {
+    script = "packer/scripts/run_service.sh"
+  }
+
 }
