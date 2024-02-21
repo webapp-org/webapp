@@ -7,6 +7,7 @@ To install and run this application locally, follow these steps:
 
 1. **Install MySQL**:
 
+
 2. **Install Node.js**:
 
 3. **Clone the repository**:
