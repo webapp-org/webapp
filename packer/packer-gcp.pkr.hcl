@@ -33,18 +33,17 @@ build {
   }
 
   provisioner "file" {
-    source      = "mysql.service"
-    destination = "/tmp/mysql.service"
+    source      = "app.service"
+    destination = "/tmp/app.service"
   }
 
   provisioner "shell" {
     inline = [
 
-      "sudo groupadd csye6225",
-      "sudo useradd -M -s /usr/sbin/nologin -g csye6225 csye6225",
+      "sudo adduser csye6225 --shell /usr/sbin/nologin",
 
       "sudo mv /tmp/script.sh /home/script.sh",
-      # # set ownership
+      # set ownership
       "sudo chown csye6225:csye6225 /home/script.sh",
       "sudo chmod +x /home/script.sh",
       "/home/script.sh",
@@ -53,14 +52,15 @@ build {
       # set ownership
       "sudo chown csye6225:csye6225 /home/webapp.zip",
       "sudo unzip /home/webapp.zip -d /home/webapp",
+      "sudo chown -R csye6225:csye6225 /home/webapp",
 
 
-      # "sudo mv /tmp/mysql.service /etc/systemd/system/mysql.service",
-      # "sudo systemctl daemon-reload",
-      # "sudo systemctl enable mysql.service",
-      # # "sudo systemctl start mysql.service",
 
-      # "sudo systemctl status mysql.service"
+      # move and run the service
+      "sudo systemctl enable mysqld.service",
+      "sudo mv /tmp/app.service /etc/systemd/system/app.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable app.service",
 
     ]
   }
