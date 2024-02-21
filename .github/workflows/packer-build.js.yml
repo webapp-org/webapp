@@ -1,12 +1,13 @@
-name: Packer
+name: Packer Build
 
 on:
-  pull_request:
-    branches: ["main"]
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    name: packer
+    name: Packer Build
 
     runs-on: ubuntu-latest
 
@@ -17,14 +18,6 @@ jobs:
       # Command to init packer
       - name: Init Packer
         run: packer init packer/packer-gcp.pkr.hcl
-
-      # Command to check packer format
-      - name: Check Packer Format
-        run: packer fmt -check packer/packer-gcp.pkr.hcl
-
-      # Command to validate packer
-      - name: Validate Packer
-        run: packer validate packer/packer-gcp.pkr.hcl
 
       # Commands to authenticate setup GCP
       - name: Authenticate GCP
