@@ -38,6 +38,18 @@ jobs:
       - name: Gcloud CLI
         run: gcloud info
 
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "DATABASE=${{ secrets.DATABASE }}" >> .env
+          echo "USERNAME=${{ secrets.USERNAME }}" >> .env
+          echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+          echo "HOST=${{ secrets.HOST }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+
+      - name: Log .env file content
+        run: cat .env
+
       # Command to create zip file of project
       - name: Create Zip Artifact
         run: zip -r webapp.zip .
