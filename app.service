@@ -7,16 +7,9 @@ Type=simple
 User=csye6225
 Group=csye6225
 
-Environment="PORT=8080"
-Environment="HOST=localhost"
-Environment="DATABASE=webapp_db"
-Environment="USERNAME=root"
-Environment="PASSWORD=chinmay1234"
-
 WorkingDirectory=/home/webapp
 ExecStartPre=/usr/bin/npm install
 ExecStart=/usr/bin/node /home/webapp/index.js
-
 
 Restart=always
 RestartSec=3
