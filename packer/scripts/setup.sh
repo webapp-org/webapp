@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 # Install MySQL
 sudo yum install mysql-server -y
 
