@@ -19,13 +19,6 @@ build {
 
   sources = ["source.googlecompute.image"]
 
-
-
-  provisioner "file" {
-    source      = "script/script.sh"
-    destination = "/tmp/script.sh"
-  }
-
   provisioner "file" {
     source      = "webapp.zip"
     destination = "/tmp/webapp.zip"
