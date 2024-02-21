@@ -7,7 +7,7 @@ sudo yum install mysql-server -y
 sudo systemctl start mysqld.service
 
 # Update MySQL password
-mysql --connect-expired-password -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'chinmay1234';"
+mysql --connect-expired-password -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
 
 # Install Node.js
 curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
