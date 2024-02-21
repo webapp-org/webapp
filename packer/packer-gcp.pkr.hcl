@@ -33,7 +33,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "app.service"
+    source      = "packer/service/app.service"
     destination = "/tmp/app.service"
   }
 

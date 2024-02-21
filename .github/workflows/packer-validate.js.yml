@@ -1,0 +1,27 @@
+name: Packer
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: packer
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Command to init packer
+      - name: Init Packer
+        run: packer init packer/packer-gcp.pkr.hcl
+
+      # Command to check packer format
+      - name: Check Packer Format
+        run: packer fmt -check packer/packer-gcp.pkr.hcl
+
+      # Command to validate packer
+      - name: Validate Packer
+        run: packer validate packer/packer-gcp.pkr.hcl
