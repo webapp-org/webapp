@@ -53,3 +53,5 @@ npm start
 1. Implement integration (and not unit) tests for the /v1/user endpoint with a new GitHub Actions workflow. Do not delete workflow from previous assignments as it must continue to function in parallel to the new one.
 2. Test 1 - Create an account, and using the GET call, validate account exists.
 3. Test 2 - Update the account and using the GET call, validate the account was updated.
+
+## Assignment 4
