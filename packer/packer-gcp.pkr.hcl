@@ -30,6 +30,11 @@ build {
     destination = "/tmp/app.service"
   }
 
+  provisioner "file" {
+    source      = ".env"
+    destination = "/tmp/.env"
+  }
+
   # Script to install dependecies 
   provisioner "shell" {
     script = "packer/scripts/setup.sh"
