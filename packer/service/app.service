@@ -1,6 +1,7 @@
 [Unit]
 Description=Webapp Run Script
 After=network.target
+ConditionPathExists=/opt/.env_configured
 
 [Service]
 Type=simple 
