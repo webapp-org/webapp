@@ -15,12 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # - name: Create .env file
-      #   run: |
-      #     touch .env
-
-      # - name: Log .env file content
-      #   run: cat .env
+      - name: Create .env file
+        run: |
+          touch .env
 
       # Command to create zip file of project
       - name: Create Zip Artifact
