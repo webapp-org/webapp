@@ -19,8 +19,8 @@ jobs:
       #   run: |
       #     touch .env
 
-      - name: Log .env file content
-        run: cat .env
+      # - name: Log .env file content
+      #   run: cat .env
 
       # Command to create zip file of project
       - name: Create Zip Artifact
