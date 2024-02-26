@@ -33,6 +33,7 @@ build {
   provisioner "file" {
     source      = ".env"
     destination = "/tmp/.env"
+    generated   = true
   }
 
   # Script to install dependecies 
