@@ -24,4 +24,4 @@ jobs:
 
       # Command to validate packer
       - name: Validate Packer
-        run: packer validate packer/packer-gcp.pkr.hcl
+        run: packer validate -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl

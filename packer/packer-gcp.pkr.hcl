@@ -1,3 +1,9 @@
+variable "project_id" {}
+variable "source_image" {}
+variable "region" {}
+variable "zone" {}
+variable "ssh_username" {}
+
 packer {
   required_plugins {
     googlecompute = {
@@ -8,11 +14,11 @@ packer {
 }
 
 source "googlecompute" "image" {
-  project_id   = "csye6225-dev-415023"
-  source_image = "centos-stream-8-v20240110"
-  region       = "us-central1"
-  zone         = "us-central1-c"
-  ssh_username = "packer"
+  project_id   = "${var.project_id}"
+  source_image = "${var.source_image}"
+  region       = "${var.region}"
+  zone         = "${var.zone}"
+  ssh_username = "${var.ssh_username}"
 }
 
 build {
@@ -29,12 +35,6 @@ build {
     source      = "packer/service/app.service"
     destination = "/tmp/app.service"
   }
-
-  # provisioner "file" {
-  #   source      = ".env"
-  #   destination = "/tmp/.env"
-  #   generated   = true
-  # }
 
   # Script to install dependecies 
   provisioner "shell" {
