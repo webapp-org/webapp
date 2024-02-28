@@ -41,4 +41,4 @@ jobs:
 
       # Command to build packer
       - name: Build Packer
-        run: packer build packer/packer-gcp.pkr.hcl
+        run: packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl
