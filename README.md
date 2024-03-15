@@ -56,4 +56,4 @@ npm start
 
 ## Assignment 4 - Packer
 
-## Assignment 5 - Cloud SQL
+## Assignment 5 - Setup Cloud MySQL
