@@ -51,4 +51,9 @@ build {
     script = "packer/scripts/run_service.sh"
   }
 
+  # Script to set up google ops agent
+  provisioner "shell" {
+    script = "packer/scripts/google_ops_agent.sh"
+  }
+
 }
