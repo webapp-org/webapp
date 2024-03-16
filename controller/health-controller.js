@@ -7,6 +7,8 @@ export const healthCheck = async (req, res) => {
     res.json();
     const logger = new Logger();
     logger.info("Database connection successfull");
+    logger.error("Sample Error");
+    logger.warn("Sample Warning");
   } catch (error) {
     res.status(503).json();
   }
