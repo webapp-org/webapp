@@ -13,3 +13,7 @@ sudo chown csye6225:csye6225 /opt/webapp.zip
 sudo unzip /opt/webapp.zip -d /opt/webapp
 sudo rm /opt/webapp.zip
 sudo chown -R csye6225:csye6225 /opt/webapp
+
+# Create log directory and set ownership
+sudo mkdir -p /var/log/webapp
+sudo chown csye6225:csye6225 /var/log/webapp
