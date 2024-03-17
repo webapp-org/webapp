@@ -7,7 +7,12 @@ const logger = createLogger({
     }),
     format.json()
   ),
-  transports: [new transports.File({ filename: "/var/log/webapp/webapp.log" })],
+  transports: [
+    new transports.File({
+      filename:
+        process.env.ENV === "dev" ? "webapp.log" : "/var/log/webapp/webapp.log",
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== "production") {
