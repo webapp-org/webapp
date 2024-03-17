@@ -14,8 +14,8 @@ ExecStart=/usr/bin/node /opt/webapp/index.js
 
 Restart=always
 RestartSec=3
-StandardOutput=file:/var/log/webapp/webapp.log
-StandardError=file:/var/log/webapp/webapp.log
+StandardOutput=syslog
+StandardError=syslog
 SyslogIdentifier=csye6225
 
 [Install]
