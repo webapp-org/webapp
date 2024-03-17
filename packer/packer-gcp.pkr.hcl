@@ -36,6 +36,11 @@ build {
     destination = "/tmp/app.service"
   }
 
+  provisioner "file" {
+    source      = "packer/google-ops-config/config.yaml"
+    destination = "/tmp/config.yaml"
+  }
+
   # Script to install dependecies 
   provisioner "shell" {
     script = "packer/scripts/setup.sh"
