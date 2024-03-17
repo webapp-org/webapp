@@ -13,6 +13,7 @@ env:
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
   DATABASE: ${{ secrets.DATABASE }}
+  ENV: ${{ secrets.ENV }}
 
 jobs:
   build:
