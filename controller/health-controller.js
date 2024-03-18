@@ -6,14 +6,14 @@ export const healthCheck = async (req, res) => {
     await db.sequelize.authenticate();
     res.json();
     logger.info({
-      message: "Database connection successful",
-      action: "Database Connection",
+      message: "Health check successful",
+      action: "Health Check API",
       status: "success",
     });
   } catch (error) {
     logger.error({
-      message: "Database connection failed",
-      action: "Database connection attempt",
+      message: "Database connection failed during health check",
+      action: "Health Check API attempt",
       status: "failed",
       error: error,
     });
