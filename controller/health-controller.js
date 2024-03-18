@@ -10,6 +10,16 @@ export const healthCheck = async (req, res) => {
       action: "Health Check API",
       status: "success",
     });
+    logger.warn({
+      message: "Sample warning log",
+      action: "Health Check API",
+      status: "success",
+    });
+    logger.debug({
+      message: "Sample debug log",
+      action: "Health Check API",
+      status: "success",
+    });
   } catch (error) {
     logger.error({
       message: "Database connection failed during health check",

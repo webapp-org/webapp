@@ -19,6 +19,7 @@ logging:
             "info": "INFO"
             "error": "ERROR"
             "warn": "WARNING"
+            "debug": "DEBUG"
   service:
     pipelines:
       default_pipeline:
