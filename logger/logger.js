@@ -9,6 +9,7 @@ const logger = createLogger({
   ),
   transports: [
     new transports.File({
+      level: "debug",
       filename:
         process.env.ENV === "dev" ? "webapp.log" : "/var/log/webapp/webapp.log",
     }),
