@@ -1,30 +1,27 @@
 import { createLogger, format, transports } from "winston";
-import { LoggingWinston } from "@google-cloud/logging-winston";
+import moment from "moment-timezone";
 
-const loggingWinston = new LoggingWinston();
+// Custom time zone format
+const timezoneFormat = format((info) => {
+  // Local Time
+  info.timestamp = moment()
+    .tz("America/New_York")
+    .format("YYYY-MM-DD HH:mm:ss");
+  // UTC
+  // info.timestamp = moment().utc().format("YYYY-MM-DD HH:mm:ss");
+  return info;
+})();
 
 const logger = createLogger({
-  format: format.combine(
-    format.timestamp({
-      format: "YYYY-MM-DD HH:mm:ss",
-    }),
-    format.json()
-  ),
+  format: format.combine(timezoneFormat, format.json()),
   transports: [
     new transports.File({
       filename:
-        process.env.ENV === "dev" ? "webapp.log" : "/var/log/webapp/webapp.log",
+        process.env.ENV === "dev"
+          ? "./webapp.log"
+          : "/var/log/webapp/webapp.log",
     }),
-    loggingWinston,
   ],
 });
-
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new transports.Console({
-      format: format.simple(),
-    })
-  );
-}
 
 export default logger;
