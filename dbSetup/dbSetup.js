@@ -49,11 +49,6 @@ async function createDatabaseIfNotExists() {
 async function authenticateDatabase() {
   try {
     await db.sequelize.authenticate();
-    logger.info({
-      message: "Connection to the database successful.",
-      action: "Database Connection",
-      status: "success",
-    });
     return true;
   } catch (error) {
     logger.error({
