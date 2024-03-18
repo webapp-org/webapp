@@ -1,23 +1,17 @@
 logging:
   receivers:
-    custom_log:
+    my-app-receiver:
       type: files
       include_paths:
         - /var/log/webapp/webapp.log
+      record_log_file_path: true
   processors:
-    parse_json_logs:
+    my-app-processor:
       type: parse_json
-    set_severity:
-      type: modify_fields
-      fields:
-        severity:
-          copy_from: jsonPayload.level
-          map_values:
-            "info": "INFO"
-            "error": "ERROR"
-            "warn": "WARNING"
+      time_key: time
+      time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
   service:
     pipelines:
       default_pipeline:
-        receivers: [custom_log]
-        processors: [parse_json_logs, set_severity]
+        receivers: [my-app-receiver]
+        processors: [my-app-processor]

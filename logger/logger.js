@@ -1,4 +1,7 @@
 import { createLogger, format, transports } from "winston";
+import { LoggingWinston } from "@google-cloud/logging-winston";
+
+const loggingWinston = new LoggingWinston();
 
 const logger = createLogger({
   format: format.combine(
@@ -12,6 +15,7 @@ const logger = createLogger({
       filename:
         process.env.ENV === "dev" ? "webapp.log" : "/var/log/webapp/webapp.log",
     }),
+    loggingWinston,
   ],
 });
 
