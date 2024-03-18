@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcryptjs from "bcryptjs";
+import logger from "../logger/logger.js";
 
 // Function to check valid email
 function isValidEmail(username) {
@@ -30,13 +31,23 @@ export const saveUser = async (req, res) => {
     }
     // if invalid email is passed
     if (!isValidEmail(username)) {
-      console.error("Invalid email address");
+      logger.error({
+        message: "Invalid email address",
+        userEmail: username,
+        action: "User registration attempt",
+        status: "failed",
+      });
       return res.status(400).json();
     }
     // if user already exists
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
-      console.error("User account already exists");
+      logger.error({
+        message: "User account already exists",
+        userEmail: username,
+        action: "User registration attempt",
+        status: "failed",
+      });
       return res.status(400).json();
     }
 
@@ -48,8 +59,22 @@ export const saveUser = async (req, res) => {
       password: hashedPassword,
     });
     const { password: pass, ...user } = newUser.dataValues;
+
+    logger.info({
+      message: "User created successfully",
+      userEmail: username,
+      action: "User registration",
+      status: "success",
+    });
+
     res.status(201).json(user);
   } catch (error) {
+    logger.error({
+      message: "Internal server error",
+      action: "User creation",
+      error: error.message,
+      stack: error.stack,
+    });
     res.status(500).json();
   }
 };
@@ -63,7 +88,12 @@ export const updateUser = async (req, res) => {
     }
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      console.error("User not found");
+      logger.error({
+        message: "User not found",
+        userEmail: username,
+        action: "User update attempt",
+        status: "failed",
+      });
       return res.status(404).json();
     }
     if (first_name) {
@@ -77,8 +107,22 @@ export const updateUser = async (req, res) => {
       user.password = hashedPassword;
     }
     await user.save();
+
+    logger.info({
+      message: "User updated successfully",
+      userEmail: username,
+      action: "User update",
+      status: "success",
+    });
+
     res.status(204).json();
   } catch (error) {
+    logger.error({
+      message: "Internal server error",
+      action: "User update",
+      error: error.message,
+      stack: error.stack,
+    });
     res.status(500).json();
   }
 };

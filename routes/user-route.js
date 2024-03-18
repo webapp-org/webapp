@@ -3,6 +3,7 @@ import * as userController from "../controller/user-controller.js";
 import User from "../models/User.js";
 import db from "../dbConfig/index.js";
 import bcryptjs from "bcryptjs";
+import logger from "../logger/logger.js";
 
 const router = express.Router();
 
@@ -85,12 +86,23 @@ const authenticateUser = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      console.error("Invalid Credentials");
+      logger.error({
+        message: "Invalid Credentials",
+        action: "Authentication attempt",
+        status: "failed",
+        reason: "User does not exist",
+      });
       return res.status(401).json();
     }
     const passwordMatch = await bcryptjs.compare(password, user.password);
     if (!passwordMatch) {
-      console.error("Invalid Credentials");
+      logger.error({
+        message: "Invalid Credentials",
+        action: "Authentication attempt",
+        status: "failed",
+        reason: "Password is incorrect",
+      });
+
       return res.status(401).json();
       x;
     }

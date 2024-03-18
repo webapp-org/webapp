@@ -1,6 +1,7 @@
 import mysql from "mysql2/promise";
 import db from "../dbConfig/index.js";
 import User from "../models/User.js";
+import logger from "../logger/logger.js";
 
 async function initializeDatabase() {
   try {
@@ -14,7 +15,12 @@ async function initializeDatabase() {
       throw new Error("Database authentication failed.");
     }
   } catch (error) {
-    console.error("Error initializing database:", error);
+    logger.error({
+      message: "Error initializing database",
+      action: "Database Initialization",
+      status: "failed",
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -31,17 +37,31 @@ async function createDatabaseIfNotExists() {
     );
     await connection.end();
   } catch (error) {
-    console.error("Error creating database:", error);
+    logger.error({
+      message: "Error creating database",
+      action: "Database Creation",
+      status: "failed",
+      error: error.message,
+    });
   }
 }
 
 async function authenticateDatabase() {
   try {
     await db.sequelize.authenticate();
-    console.log("Connection to the database successful.");
+    logger.info({
+      message: "Connection to the database successful.",
+      action: "Database Connection",
+      status: "success",
+    });
     return true;
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
+    logger.error({
+      message: "Unable to connect to the database",
+      action: "Database Connection",
+      status: "failed",
+      error: error.message,
+    });
     throw new Error("Error in authenticate database");
   }
 }
@@ -52,7 +72,12 @@ async function syncModels(models = []) {
       await model.sync({ alter: true });
     }
   } catch (error) {
-    console.error("Error synchronizing models:", error);
+    logger.error({
+      message: "Error synchronizing models",
+      action: "Model Synchronization",
+      status: "failed",
+      error: error.message,
+    });
     throw error;
   }
 }
