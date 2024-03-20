@@ -15,15 +15,15 @@ logging:
       fields:
         severity:
           copy_from: jsonPayload.level
-          map_values:
-            "emerg": "EMERGENCY"
-            "alert": "ALERT"
-            "crit": "CRITICAL"
-            "error": "ERROR"
-            "warning": "WARNING"
-            "notice": "NOTICE"
-            "info": "INFO"
-            "debug": "DEBUG"
+          # map_values:
+          #   "emerg": "EMERGENCY"
+          #   "alert": "ALERT"
+          #   "crit": "CRITICAL"
+          #   "error": "ERROR"
+          #   "warning": "WARNING"
+          #   "notice": "NOTICE"
+          #   "info": "INFO"
+          #   "debug": "DEBUG"
   service:
     pipelines:
       default_pipeline:

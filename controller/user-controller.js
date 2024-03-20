@@ -23,11 +23,42 @@ export const saveUser = async (req, res) => {
     console.log("here");
     // if unwanted fields are passed
     if (Object.keys(unwantedFields).length > 0) {
+      logger.error({
+        message: "Unwanted fields in request payload",
+        action: "User registration attempt",
+        status: "failed",
+        unwantedFields: Object.keys(unwantedFields),
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 400,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
+      });
       return res.status(400).send();
     }
 
     // if empty fields are passed
     if (!first_name || !last_name || !username || !password) {
+      logger.error({
+        message: "Missing required fields in request payload",
+        action: "User registration attempt",
+        status: "failed",
+        missingFields: [
+          !first_name ? "first_name" : null,
+          !last_name ? "last_name" : null,
+          !username ? "username" : null,
+          !password ? "password" : null,
+        ].filter(Boolean),
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 400,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
+      });
       return res.status(400).json();
     }
     // if invalid email is passed
@@ -50,7 +81,6 @@ export const saveUser = async (req, res) => {
     }
     // if user already exists
     const existingUser = await User.findOne({ where: { username } });
-    console.log("user already exists");
     if (existingUser) {
       logger.error({
         message: "User account already exists",
@@ -117,6 +147,19 @@ export const updateUser = async (req, res) => {
     const username = req.user.username;
     const { first_name, last_name, password, ...unwantedFields } = req.body;
     if (Object.keys(unwantedFields).length > 0) {
+      logger.error({
+        message: "Unwanted fields in request payload",
+        action: "User update attempt",
+        status: "failed",
+        unwantedFields: Object.keys(unwantedFields),
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 400,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
+      });
       return res.status(400).send();
     }
     const user = await User.findOne({ where: { username } });
@@ -150,7 +193,7 @@ export const updateUser = async (req, res) => {
     await user.save();
 
     logger.info({
-      message: "User updated successfullya",
+      message: "User updated successfully",
       userEmail: username,
       action: "User update",
       status: "success",
