@@ -102,7 +102,7 @@ export const saveUser = async (req, res) => {
     if (account_created || account_updated) {
       logger.warn({
         message: "Attempt to update read-only fields",
-        action: "User registration attempt",
+        action: "User registration/update attempt",
         status: "warning",
         fields: ["account_created", "account_updated"].filter(
           (field) => req.body[field] !== undefined
@@ -192,20 +192,6 @@ export const updateUser = async (req, res) => {
       });
       return res.status(404).json();
     }
-
-    // Warn if account_created or account_updated are passed in the payload
-    if (account_created || account_updated) {
-      logger.warn({
-        message: "Attempt to update read-only fields",
-        action: "User update attempt",
-        status: "warning",
-        fields: ["account_created", "account_updated"].filter(
-          (field) => req.body[field] !== undefined
-        ),
-        userEmail: username,
-      });
-    }
-
     if (first_name) {
       user.first_name = first_name;
     }
