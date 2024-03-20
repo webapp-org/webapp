@@ -20,10 +20,9 @@ export const saveUser = async (req, res) => {
       ...unwantedFields
     } = req.body;
 
-    console.log("here");
     // if unwanted fields are passed
     if (Object.keys(unwantedFields).length > 0) {
-      logger.error({
+      logger.warn({
         message: "Unwanted fields in request payload",
         action: "User registration attempt",
         status: "failed",
@@ -41,7 +40,7 @@ export const saveUser = async (req, res) => {
 
     // if empty fields are passed
     if (!first_name || !last_name || !username || !password) {
-      logger.error({
+      logger.warn({
         message: "Missing required fields in request payload",
         action: "User registration attempt",
         status: "failed",
@@ -63,7 +62,7 @@ export const saveUser = async (req, res) => {
     }
     // if invalid email is passed
     if (!isValidEmail(username)) {
-      logger.error({
+      logger.warn({
         message: "Invalid email address",
         action: "User registration attempt",
         status: "failed",
@@ -108,9 +107,9 @@ export const saveUser = async (req, res) => {
     });
     const { password: pass, ...user } = newUser.dataValues;
 
-    logger.info({
+    logger.debug({
       message: "User created successfully",
-      userEmail: username,
+      user: newUser,
       action: "User registration",
       status: "success",
       httpRequest: {
@@ -192,9 +191,9 @@ export const updateUser = async (req, res) => {
     }
     await user.save();
 
-    logger.info({
+    logger.debug({
       message: "User updated successfully",
-      userEmail: username,
+      user: user,
       action: "User update",
       status: "success",
       httpRequest: {
