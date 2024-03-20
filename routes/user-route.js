@@ -91,6 +91,12 @@ const authenticateUser = async (req, res, next) => {
         action: "Authentication attempt",
         status: "failed",
         reason: "User does not exist",
+        httpRequest: {
+          requestMethod: req.method,
+          requestUrl: req.url,
+          status: 401,
+          userAgent: req.headers["user-agent"],
+        },
       });
       return res.status(401).json();
     }
@@ -101,6 +107,12 @@ const authenticateUser = async (req, res, next) => {
         action: "Authentication attempt",
         status: "failed",
         reason: "Password is incorrect",
+        httpRequest: {
+          requestMethod: req.method,
+          requestUrl: req.url,
+          status: 401,
+          userAgent: req.headers["user-agent"],
+        },
       });
 
       return res.status(401).json();

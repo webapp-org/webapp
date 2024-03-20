@@ -33,9 +33,17 @@ export const saveUser = async (req, res) => {
     if (!isValidEmail(username)) {
       logger.error({
         message: "Invalid email address",
-        userEmail: username,
         action: "User registration attempt",
         status: "failed",
+        userEmail: username,
+        error: error.message,
+        stack: error.stack,
+        httpRequest: {
+          requestMethod: req.method,
+          requestUrl: req.url,
+          status: 400,
+          userAgent: req.headers["user-agent"],
+        },
       });
       return res.status(400).json();
     }
@@ -44,9 +52,17 @@ export const saveUser = async (req, res) => {
     if (existingUser) {
       logger.error({
         message: "User account already exists",
-        userEmail: username,
         action: "User registration attempt",
         status: "failed",
+        userEmail: username,
+        error: error.message,
+        stack: error.stack,
+        httpRequest: {
+          requestMethod: req.method,
+          requestUrl: req.url,
+          status: 400,
+          userAgent: req.headers["user-agent"],
+        },
       });
       return res.status(400).json();
     }
@@ -65,6 +81,12 @@ export const saveUser = async (req, res) => {
       userEmail: username,
       action: "User registration",
       status: "success",
+      httpRequest: {
+        requestMethod: req.method,
+        requestUrl: req.url,
+        status: 201,
+        userAgent: req.headers["user-agent"],
+      },
     });
 
     res.status(201).json(user);
@@ -72,8 +94,16 @@ export const saveUser = async (req, res) => {
     logger.error({
       message: "Internal server error",
       action: "User creation",
+      status: "failed",
+      userEmail: username,
       error: error.message,
       stack: error.stack,
+      httpRequest: {
+        requestMethod: req.method,
+        requestUrl: req.url,
+        status: 400,
+        userAgent: req.headers["user-agent"],
+      },
     });
     res.status(500).json();
   }
@@ -90,9 +120,17 @@ export const updateUser = async (req, res) => {
     if (!user) {
       logger.error({
         message: "User not found",
-        userEmail: username,
         action: "User update attempt",
         status: "failed",
+        userEmail: username,
+        error: error.message,
+        stack: error.stack,
+        httpRequest: {
+          requestMethod: req.method,
+          requestUrl: req.url,
+          status: 404,
+          userAgent: req.headers["user-agent"],
+        },
       });
       return res.status(404).json();
     }
@@ -113,6 +151,12 @@ export const updateUser = async (req, res) => {
       userEmail: username,
       action: "User update",
       status: "success",
+      httpRequest: {
+        requestMethod: req.method,
+        requestUrl: req.url,
+        status: 204,
+        userAgent: req.headers["user-agent"],
+      },
     });
 
     res.status(204).json();
@@ -120,8 +164,16 @@ export const updateUser = async (req, res) => {
     logger.error({
       message: "Internal server error",
       action: "User update",
+      status: "failed",
+      userEmail: username,
       error: error.message,
       stack: error.stack,
+      httpRequest: {
+        requestMethod: req.method,
+        requestUrl: req.url,
+        status: 500,
+        userAgent: req.headers["user-agent"],
+      },
     });
     res.status(500).json();
   }
