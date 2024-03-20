@@ -17,16 +17,16 @@ export const saveUser = async (req, res) => {
       password,
       account_created,
       account_updated,
-      ...unwantedFields
+      ...invalidFields
     } = req.body;
 
-    // if unwanted fields are passed
-    if (Object.keys(unwantedFields).length > 0) {
+    // if Invalid fields are passed
+    if (Object.keys(invalidFields).length > 0) {
       logger.warn({
-        message: "Unwanted fields in request payload",
+        message: "Invalid fields in request payload",
         action: "User registration attempt",
         status: "failed",
-        unwantedFields: Object.keys(unwantedFields),
+        invalidFields: Object.keys(invalidFields),
         httpRequest: {
           requestMethod: req.method,
           path: req.originalUrl,
@@ -144,13 +144,13 @@ export const saveUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const username = req.user.username;
-    const { first_name, last_name, password, ...unwantedFields } = req.body;
-    if (Object.keys(unwantedFields).length > 0) {
+    const { first_name, last_name, password, ...invalidFields } = req.body;
+    if (Object.keys(invalidFields).length > 0) {
       logger.error({
-        message: "Unwanted fields in request payload",
+        message: "Invalid fields in request payload",
         action: "User update attempt",
         status: "failed",
-        unwantedFields: Object.keys(unwantedFields),
+        invalidFields: Object.keys(invalidFields),
         httpRequest: {
           requestMethod: req.method,
           path: req.originalUrl,
