@@ -62,7 +62,7 @@ export const saveUser = async (req, res) => {
     }
     // if invalid email is passed
     if (!isValidEmail(username)) {
-      logger.warn({
+      logger.error({
         message: "Invalid email address",
         action: "User registration attempt",
         status: "failed",
@@ -202,6 +202,20 @@ export const updateUser = async (req, res) => {
       const hashedPassword = await bcryptjs.hash(password, 10);
       user.password = hashedPassword;
     }
+
+    // warning if account_created or account_updated are passed in the payload
+    if (account_created || account_updated) {
+      logger.warn({
+        message: "Attempt to update read-only fields",
+        action: "User registration/update attempt",
+        status: "warning",
+        fields: ["account_created", "account_updated"].filter(
+          (field) => req.body[field] !== undefined
+        ),
+        userEmail: username,
+      });
+    }
+
     await user.save();
 
     logger.debug({
