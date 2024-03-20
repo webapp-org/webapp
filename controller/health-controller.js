@@ -18,34 +18,6 @@ export const healthCheck = async (req, res) => {
         status: res.statusCode,
       },
     });
-
-    // sample warning log
-    logger.warn({
-      message: "Sample warning log",
-      action: "Health Check API",
-      status: "success",
-      httpRequest: {
-        method: req.method,
-        url: req.url,
-        userAgent: req.headers["user-agent"],
-        ip: req.ip,
-        status: res.statusCode,
-      },
-    });
-
-    // sample debug log
-    logger.debug({
-      message: "Sample debug log",
-      action: "Health Check API",
-      status: "success",
-      httpRequest: {
-        method: req.method,
-        url: req.url,
-        userAgent: req.headers["user-agent"],
-        ip: req.ip,
-        status: res.statusCode,
-      },
-    });
   } catch (error) {
     // error log
     logger.error({
