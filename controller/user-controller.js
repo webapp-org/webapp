@@ -108,6 +108,13 @@ export const saveUser = async (req, res) => {
           (field) => req.body[field] !== undefined
         ),
         userEmail: username,
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 200,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
       });
     }
 
@@ -220,6 +227,13 @@ export const updateUser = async (req, res) => {
           (field) => req.body[field] !== undefined
         ),
         userEmail: username,
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 200,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
       });
     }
     await user.save();
