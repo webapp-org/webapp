@@ -22,7 +22,7 @@ export const saveUser = async (req, res) => {
 
     // if Invalid fields are passed
     if (Object.keys(invalidFields).length > 0) {
-      logger.warn({
+      logger.error({
         message: "Invalid fields in request payload",
         action: "User registration attempt",
         status: "failed",
@@ -40,7 +40,7 @@ export const saveUser = async (req, res) => {
 
     // if empty fields are passed
     if (!first_name || !last_name || !username || !password) {
-      logger.warn({
+      logger.error({
         message: "Missing required fields in request payload",
         action: "User registration attempt",
         status: "failed",
@@ -96,6 +96,19 @@ export const saveUser = async (req, res) => {
         },
       });
       return res.status(400).json();
+    }
+
+    // warning if account_created or account_updated are passed in the payload
+    if (account_created || account_updated) {
+      logger.warn({
+        message: "Attempt to update read-only fields",
+        action: "User registration attempt",
+        status: "warning",
+        fields: ["account_created", "account_updated"].filter(
+          (field) => req.body[field] !== undefined
+        ),
+        userEmail: username,
+      });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -179,6 +192,20 @@ export const updateUser = async (req, res) => {
       });
       return res.status(404).json();
     }
+
+    // Warn if account_created or account_updated are passed in the payload
+    if (account_created || account_updated) {
+      logger.warn({
+        message: "Attempt to update read-only fields",
+        action: "User update attempt",
+        status: "warning",
+        fields: ["account_created", "account_updated"].filter(
+          (field) => req.body[field] !== undefined
+        ),
+        userEmail: username,
+      });
+    }
+
     if (first_name) {
       user.first_name = first_name;
     }
