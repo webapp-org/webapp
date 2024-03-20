@@ -20,6 +20,7 @@ async function initializeDatabase() {
       action: "Database Initialization",
       status: "failed",
       error: error.message,
+      stack: error.stack,
     });
     throw error;
   }
@@ -42,6 +43,7 @@ async function createDatabaseIfNotExists() {
       action: "Database Creation",
       status: "failed",
       error: error.message,
+      stack: error.stack,
     });
   }
 }
@@ -56,6 +58,7 @@ async function authenticateDatabase() {
       action: "Database Connection",
       status: "failed",
       error: error.message,
+      stack: error.stack,
     });
     throw new Error("Error in authenticate database");
   }
@@ -72,6 +75,7 @@ async function syncModels(models = []) {
       action: "Model Synchronization",
       status: "failed",
       error: error.message,
+      stack: error.stack,
     });
     throw error;
   }

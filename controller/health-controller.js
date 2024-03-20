@@ -14,6 +14,7 @@ export const healthCheck = async (req, res) => {
         method: req.method,
         url: req.url,
         userAgent: req.headers["user-agent"],
+        ip: req.ip,
         status: res.statusCode,
       },
     });
@@ -27,6 +28,7 @@ export const healthCheck = async (req, res) => {
         method: req.method,
         url: req.url,
         userAgent: req.headers["user-agent"],
+        ip: req.ip,
         status: res.statusCode,
       },
     });
@@ -40,6 +42,7 @@ export const healthCheck = async (req, res) => {
         method: req.method,
         url: req.url,
         userAgent: req.headers["user-agent"],
+        ip: req.ip,
         status: res.statusCode,
       },
     });
@@ -54,6 +57,7 @@ export const healthCheck = async (req, res) => {
       httpRequest: {
         method: req.method,
         url: req.url,
+        ip: req.ip,
         userAgent: req.headers["user-agent"],
         status: 503,
       },
