@@ -238,7 +238,6 @@ export const updateUser = async (req, res) => {
       message: "Internal server error",
       action: "User update",
       status: "failed",
-      userEmail: username,
       error: error.message,
       stack: error.stack,
       httpRequest: {
