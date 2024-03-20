@@ -203,19 +203,6 @@ export const updateUser = async (req, res) => {
       user.password = hashedPassword;
     }
 
-    // warning if account_created or account_updated are passed in the payload
-    if (account_created || account_updated) {
-      logger.warn({
-        message: "Attempt to update read-only fields",
-        action: "User registration/update attempt",
-        status: "warning",
-        fields: ["account_created", "account_updated"].filter(
-          (field) => req.body[field] !== undefined
-        ),
-        userEmail: username,
-      });
-    }
-
     await user.save();
 
     logger.debug({
