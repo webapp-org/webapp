@@ -90,11 +90,13 @@ const authenticateUser = async (req, res, next) => {
         message: "Invalid Credentials",
         action: "Authentication attempt",
         status: "failed",
-        reason: "User does not exist",
+        userEmail: username,
+        error: "User does not exist",
         httpRequest: {
           requestMethod: req.method,
-          requestUrl: req.url,
+          path: req.originalUrl,
           status: 401,
+          ip: req.ip,
           userAgent: req.headers["user-agent"],
         },
       });
@@ -106,11 +108,13 @@ const authenticateUser = async (req, res, next) => {
         message: "Invalid Credentials",
         action: "Authentication attempt",
         status: "failed",
-        reason: "Password is incorrect",
+        userEmail: username,
+        error: "Password is incorrect",
         httpRequest: {
           requestMethod: req.method,
-          requestUrl: req.url,
+          path: req.originalUrl,
           status: 401,
+          ip: req.ip,
           userAgent: req.headers["user-agent"],
         },
       });

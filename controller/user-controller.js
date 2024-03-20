@@ -20,6 +20,7 @@ export const saveUser = async (req, res) => {
       ...unwantedFields
     } = req.body;
 
+    console.log("here");
     // if unwanted fields are passed
     if (Object.keys(unwantedFields).length > 0) {
       return res.status(400).send();
@@ -36,12 +37,12 @@ export const saveUser = async (req, res) => {
         action: "User registration attempt",
         status: "failed",
         userEmail: username,
-        error: error.message,
-        stack: error.stack,
+        error: "Invalid email address",
         httpRequest: {
           requestMethod: req.method,
-          requestUrl: req.url,
+          path: req.originalUrl,
           status: 400,
+          ip: req.ip,
           userAgent: req.headers["user-agent"],
         },
       });
@@ -49,18 +50,19 @@ export const saveUser = async (req, res) => {
     }
     // if user already exists
     const existingUser = await User.findOne({ where: { username } });
+    console.log("user already exists");
     if (existingUser) {
       logger.error({
         message: "User account already exists",
         action: "User registration attempt",
         status: "failed",
         userEmail: username,
-        error: error.message,
-        stack: error.stack,
+        error: "User account already exists",
         httpRequest: {
           requestMethod: req.method,
-          requestUrl: req.url,
+          path: req.originalUrl,
           status: 400,
+          ip: req.ip,
           userAgent: req.headers["user-agent"],
         },
       });
@@ -83,8 +85,9 @@ export const saveUser = async (req, res) => {
       status: "success",
       httpRequest: {
         requestMethod: req.method,
-        requestUrl: req.url,
+        path: req.originalUrl,
         status: 201,
+        ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
     });
@@ -95,13 +98,13 @@ export const saveUser = async (req, res) => {
       message: "Internal server error",
       action: "User creation",
       status: "failed",
-      userEmail: username,
       error: error.message,
       stack: error.stack,
       httpRequest: {
         requestMethod: req.method,
-        requestUrl: req.url,
-        status: 400,
+        path: req.originalUrl,
+        status: 500,
+        ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
     });
@@ -119,16 +122,16 @@ export const updateUser = async (req, res) => {
     const user = await User.findOne({ where: { username } });
     if (!user) {
       logger.error({
-        message: "User not found",
+        message: "User does not exist",
         action: "User update attempt",
         status: "failed",
         userEmail: username,
-        error: error.message,
-        stack: error.stack,
+        error: "User does not exist",
         httpRequest: {
           requestMethod: req.method,
-          requestUrl: req.url,
+          path: req.originalUrl,
           status: 404,
+          ip: req.ip,
           userAgent: req.headers["user-agent"],
         },
       });
@@ -147,14 +150,15 @@ export const updateUser = async (req, res) => {
     await user.save();
 
     logger.info({
-      message: "User updated successfully",
+      message: "User updated successfullya",
       userEmail: username,
       action: "User update",
       status: "success",
       httpRequest: {
         requestMethod: req.method,
-        requestUrl: req.url,
+        path: req.originalUrl,
         status: 204,
+        ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
     });
@@ -170,8 +174,9 @@ export const updateUser = async (req, res) => {
       stack: error.stack,
       httpRequest: {
         requestMethod: req.method,
-        requestUrl: req.url,
+        path: req.originalUrl,
         status: 500,
+        ip: req.ip,
         userAgent: req.headers["user-agent"],
       },
     });
