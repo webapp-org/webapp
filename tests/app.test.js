@@ -1,7 +1,6 @@
 import supertest from "supertest";
 import app from "../index.js";
 import initializeDatabase from "../dbSetup/dbSetup.js";
-import User from "../models/User.js";
 
 beforeAll(async () => {
   await initializeDatabase();
