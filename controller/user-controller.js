@@ -5,7 +5,6 @@ import { PubSub } from "@google-cloud/pubsub";
 import { v4 as uuidv4 } from "uuid";
 
 const pubSubClient = new PubSub();
-const JWT_SECRET_KEY = process.env.JWT_SECRET;
 
 // Function to check valid email
 function isValidEmail(username) {
@@ -16,7 +15,9 @@ function isValidEmail(username) {
 async function publishVerificationMessage(email, verificationLink, req) {
   const messageData = JSON.stringify({ email, verificationLink });
   try {
-    await pubSubClient.topic("verify_email").publish(Buffer.from(messageData));
+    await pubSubClient
+      .topic(process.env.PUBSUB_TOPIC_NAME)
+      .publish(Buffer.from(messageData));
     // await pubSubClient.topic("my-topic").publish(Buffer.from(messageData));
     logger.debug({
       message: "Verification message successfully published to Pub/Sub.",
@@ -203,7 +204,9 @@ export const saveUser = async (req, res) => {
     const verificationLink = `http://${domainName}:${port}/verify?token=${verificationToken}`;
 
     // Use `publishVerificationMessage` or directly send an email with the verification link
-    await publishVerificationMessage(username, verificationLink, req);
+    if (process.env.ENV === "prod") {
+      await publishVerificationMessage(username, verificationLink, req);
+    }
 
     res.status(201).json(user);
   } catch (error) {
