@@ -32,6 +32,22 @@ const User = db.sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    verificationToken: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    verificationTokenExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    emailSent: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     timestamps: true,

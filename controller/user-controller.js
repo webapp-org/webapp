@@ -1,11 +1,50 @@
 import User from "../models/User.js";
 import bcryptjs from "bcryptjs";
 import logger from "../logger/logger.js";
+import { PubSub } from "@google-cloud/pubsub";
+import { v4 as uuidv4 } from "uuid";
+
+const pubSubClient = new PubSub();
+const JWT_SECRET_KEY = process.env.JWT_SECRET;
 
 // Function to check valid email
 function isValidEmail(username) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(username);
+}
+
+async function publishVerificationMessage(email, verificationLink, req) {
+  const messageData = JSON.stringify({ email, verificationLink });
+  try {
+    await pubSubClient.topic("verify_email").publish(Buffer.from(messageData));
+    // await pubSubClient.topic("my-topic").publish(Buffer.from(messageData));
+    logger.debug({
+      message: "Verification message successfully published to Pub/Sub.",
+      action: "Publish verification message",
+      status: "success",
+      userEmail: email,
+      httpRequest: {
+        requestMethod: req.method,
+        path: req.originalUrl,
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+    });
+  } catch (error) {
+    logger.error({
+      message: "Failed to publish verification message to Pub/Sub",
+      error: error.message,
+      action: "Publishing to Pub/Sub",
+      status: "failed",
+      userEmail: email,
+      httpRequest: {
+        requestMethod: req.method,
+        path: req.originalUrl,
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+    });
+  }
 }
 
 export const saveUser = async (req, res) => {
@@ -95,6 +134,7 @@ export const saveUser = async (req, res) => {
           userAgent: req.headers["user-agent"],
         },
       });
+      console.error("User account already exists");
       return res.status(400).json();
     }
 
@@ -119,13 +159,28 @@ export const saveUser = async (req, res) => {
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
+
+    // Generate a UUID for the verification token
+    const verificationToken = uuidv4();
+    const verificationTokenExpires = new Date(Date.now() + 120000);
+
     const newUser = await User.create({
       first_name,
       last_name,
       username,
       password: hashedPassword,
+      isVerified: false,
+      verificationToken,
+      verificationTokenExpires,
     });
-    const { password: pass, ...user } = newUser.dataValues;
+
+    const {
+      password: pass,
+      isVerified: isVerified,
+      verificationToken: token,
+      verificationTokenExpires: tokenExpirationDate,
+      ...user
+    } = newUser.dataValues;
 
     logger.debug({
       message: "User created successfully",
@@ -140,6 +195,15 @@ export const saveUser = async (req, res) => {
         userAgent: req.headers["user-agent"],
       },
     });
+
+    // Construct verification link with JWT
+    const domainName = process.env.DOMAIN_NAME;
+    const port = process.env.PORT;
+
+    const verificationLink = `http://${domainName}:${port}/verify?token=${verificationToken}`;
+
+    // Use `publishVerificationMessage` or directly send an email with the verification link
+    await publishVerificationMessage(username, verificationLink, req);
 
     res.status(201).json(user);
   } catch (error) {
@@ -157,6 +221,7 @@ export const saveUser = async (req, res) => {
         userAgent: req.headers["user-agent"],
       },
     });
+    console.error(error.message);
     res.status(500).json();
   }
 };
