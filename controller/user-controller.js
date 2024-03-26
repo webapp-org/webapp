@@ -366,3 +366,62 @@ export const getUser = async (req, res) => {
     res.status(500).json();
   }
 };
+
+export const deleteUser = async (req, res) => {
+  console.log("in delete usser");
+  try {
+    const { username } = req.params; // Assuming username is passed as a URL parameter
+
+    // Check if the user exists
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      logger.error({
+        message: "User not found",
+        action: "Delete user attempt",
+        status: "failed",
+        userEmail: username,
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 404,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
+      });
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Delete the user
+    await User.destroy({ where: { username } });
+
+    logger.info({
+      message: "User deleted successfully",
+      action: "Delete user",
+      userEmail: username,
+      httpRequest: {
+        requestMethod: req.method,
+        path: req.originalUrl,
+        status: 200,
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+    });
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    logger.error({
+      message: "Internal server error",
+      action: "Delete user",
+      status: "failed",
+      error: error.message,
+      httpRequest: {
+        requestMethod: req.method,
+        path: req.originalUrl,
+        status: 500,
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+    });
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

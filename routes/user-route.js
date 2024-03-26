@@ -166,6 +166,8 @@ router.all("/self", (req, res) => {
   res.status(405).send();
 });
 
+router.delete("/:username", userController.deleteUser);
+
 // If any other end point
 router.all("*", (req, res) => {
   res.status(404);
