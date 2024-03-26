@@ -32,6 +32,7 @@ async function publishVerificationMessage(email, verificationLink, req) {
       },
     });
   } catch (error) {
+    console.error(error.message);
     logger.error({
       message: "Failed to publish verification message to Pub/Sub",
       error: error.message,
@@ -204,9 +205,9 @@ export const saveUser = async (req, res) => {
     const verificationLink = `http://${domainName}:${port}/verify?token=${verificationToken}`;
 
     // Use `publishVerificationMessage` or directly send an email with the verification link
-    if (process.env.ENV === "prod") {
-      await publishVerificationMessage(username, verificationLink, req);
-    }
+    // if (process.env.ENV === "prod") {
+    await publishVerificationMessage(username, verificationLink, req);
+    // }
 
     res.status(201).json(user);
   } catch (error) {
