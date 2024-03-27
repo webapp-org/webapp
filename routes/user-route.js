@@ -147,6 +147,36 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
+// middleware for /verify
+const validateVerificationRequest = (req, res, next) => {
+  // Check if the request method is GET
+  if (req.method !== "GET") {
+    logger.error({
+      message:
+        "Invalid request method. Only GET requests are allowed for verification.",
+      action: "Verify User",
+      status: "failed",
+      httpRequest: createHttpRequestLog(req, 500),
+    });
+    return res.status(500).send("Invalid request method.");
+  }
+
+  // Check if the request has a query parameter 'token'
+  const token = req.query.token;
+  if (!token) {
+    logger.error({
+      message:
+        "Verification attempt failed: No token provided in query parameters.",
+      action: "Verify User",
+      status: "failed",
+      httpRequest: createHttpRequestLog(req, 400),
+    });
+    return res.status(400).send("Verification token is missing");
+  }
+
+  next();
+};
+
 // Post endpoint for user
 router.post(
   "/",
@@ -160,11 +190,7 @@ router.all("/", (req, res) => {
 });
 
 // Verify user with token
-router.get(
-  "/verify",
-  // validateAuthenticatedUserPayload,
-  verifyController.verifyUser
-);
+router.get("/verify", validateVerificationRequest, verifyController.verifyUser);
 
 // Authenticated end points
 
@@ -198,5 +224,15 @@ router.all("*", (req, res) => {
   res.status(404);
   res.send();
 });
+
+function createHttpRequestLog(req, statusCode) {
+  return {
+    requestMethod: req.method,
+    path: req.originalUrl,
+    status: statusCode,
+    ip: req.ip,
+    userAgent: req.headers["user-agent"],
+  };
+}
 
 export default router;
