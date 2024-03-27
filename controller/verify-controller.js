@@ -1,10 +1,7 @@
-import express from "express";
 import User from "../models/User.js";
 import logger from "../logger/logger.js";
 
-const router = express.Router();
-
-router.get("/:token", async (req, res) => {
+export const verifyUser = async (req, res) => {
   const { token } = req.params;
 
   if (!token) {
@@ -77,7 +74,7 @@ router.get("/:token", async (req, res) => {
     console.error(error);
     return res.status(500).send("Failed to verify user.");
   }
-});
+};
 
 function createHttpRequestLog(req, statusCode) {
   return {
@@ -88,5 +85,3 @@ function createHttpRequestLog(req, statusCode) {
     userAgent: req.headers["user-agent"],
   };
 }
-
-export default router;

@@ -1,5 +1,6 @@
 import express from "express";
 import * as userController from "../controller/user-controller.js";
+import * as verifyController from "../controller/verify-controller.js";
 import User from "../models/User.js";
 import db from "../dbConfig/index.js";
 import bcryptjs from "bcryptjs";
@@ -157,6 +158,13 @@ router.post(
 router.all("/", (req, res) => {
   return res.status(405).send();
 });
+
+// Verify user with token
+router.get(
+  "/verify/:token",
+  validateAuthenticatedUserPayload,
+  verifyController.verifyUser
+);
 
 // Authenticated end points
 
