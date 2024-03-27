@@ -161,8 +161,8 @@ router.all("/", (req, res) => {
 
 // Verify user with token
 router.get(
-  "/verify/:token",
-  validateAuthenticatedUserPayload,
+  "/verify",
+  // validateAuthenticatedUserPayload,
   verifyController.verifyUser
 );
 

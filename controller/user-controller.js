@@ -202,7 +202,8 @@ export const saveUser = async (req, res) => {
     const domainName = process.env.DOMAIN_NAME;
     const port = process.env.PORT;
 
-    const verificationLink = `http://${domainName}:${port}/v1/user/verify/${verificationToken}`;
+    // const verificationLink = `http://${domainName}:${port}/v1/user/verify/${verificationToken}`;
+    const verificationLink = `http://${domainName}:${port}/v1/user/verify?token=${verificationToken}`;
     // console.log(verificationLink);
 
     // publish verification message on prod
