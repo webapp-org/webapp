@@ -48,6 +48,10 @@ const User = db.sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    emailSentTime: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

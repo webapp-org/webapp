@@ -1,6 +1,7 @@
 import supertest from "supertest";
 import app from "../index.js";
 import initializeDatabase from "../dbSetup/dbSetup.js";
+import User from "../models/User.js";
 
 beforeAll(async () => {
   await initializeDatabase();
@@ -28,6 +29,11 @@ describe("Integration Tests", () => {
     expect(response.status).toBe(201);
     createdUserId = response.body.id;
     expect(response.body).toHaveProperty("id");
+
+    if (createdUserId) {
+      await User.update({ isVerified: true }, { where: { id: createdUserId } });
+      console.log("User verification status updated to true in the database");
+    }
 
     // Get request to verify user
     const authHeader =

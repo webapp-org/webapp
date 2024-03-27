@@ -34,10 +34,6 @@ router.get("/", async (req, res) => {
       return res.status(200).send("Verification successfull");
     }
 
-    console.log(user.username);
-    console.log(user.verificationTokenExpires);
-    console.log(new Date());
-
     if (new Date() > new Date(user.verificationTokenExpires)) {
       logger.error({
         message: "Verification failed: Token has expired.",

@@ -102,6 +102,23 @@ const authenticateUser = async (req, res, next) => {
       });
       return res.status(401).json();
     }
+    if (!user.isVerified) {
+      logger.error({
+        message: "User is not verified",
+        action: "Authentication attempt",
+        status: "failed",
+        userEmail: username,
+        error: "User is not verified",
+        httpRequest: {
+          requestMethod: req.method,
+          path: req.originalUrl,
+          status: 401,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"],
+        },
+      });
+      return res.status(401).json();
+    }
     const passwordMatch = await bcryptjs.compare(password, user.password);
     if (!passwordMatch) {
       logger.error({

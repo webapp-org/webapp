@@ -164,7 +164,7 @@ export const saveUser = async (req, res) => {
 
     // Generate a UUID for the verification token
     const verificationToken = uuidv4();
-    const verificationTokenExpires = new Date(Date.now() + 120000);
+    // const verificationTokenExpires = new Date(Date.now() + 120000);
 
     const newUser = await User.create({
       first_name,
@@ -173,14 +173,14 @@ export const saveUser = async (req, res) => {
       password: hashedPassword,
       isVerified: false,
       verificationToken,
-      verificationTokenExpires,
+      // verificationTokenExpires,
     });
 
     const {
       password: pass,
       isVerified: isVerified,
       verificationToken: token,
-      verificationTokenExpires: tokenExpirationDate,
+      // verificationTokenExpires: tokenExpirationDate,
       ...user
     } = newUser.dataValues;
 
@@ -203,11 +203,12 @@ export const saveUser = async (req, res) => {
     const port = process.env.PORT;
 
     const verificationLink = `http://${domainName}:${port}/verify?token=${verificationToken}`;
+    // console.log(verificationLink);
 
-    // Use `publishVerificationMessage` or directly send an email with the verification link
-    // if (process.env.ENV === "prod") {
-    await publishVerificationMessage(username, verificationLink, req);
-    // }
+    // publish verification message on prod
+    if (process.env.ENV === "prod") {
+      await publishVerificationMessage(username, verificationLink, req);
+    }
 
     res.status(201).json(user);
   } catch (error) {
