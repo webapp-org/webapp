@@ -180,6 +180,7 @@ export const saveUser = async (req, res) => {
       password: pass,
       isVerified: isVerified,
       verificationToken: token,
+      emailSent: emailSent,
       // verificationTokenExpires: tokenExpirationDate,
       ...user
     } = newUser.dataValues;
