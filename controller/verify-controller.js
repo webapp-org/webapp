@@ -2,7 +2,8 @@ import User from "../models/User.js";
 import logger from "../logger/logger.js";
 
 export const verifyUser = async (req, res) => {
-  const { token } = req.params;
+  // const { token } = req.params;
+  const token = req.query.token;
 
   if (!token) {
     logger.error({
