@@ -59,3 +59,5 @@ npm start
 ## Assignment 5 - Setup Cloud MySQL
 
 ## Assignment 6 - Logging
+
+## Assignment 7
