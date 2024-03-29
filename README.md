@@ -60,4 +60,4 @@ npm start
 
 ## Assignment 6 - Logging
 
-## Assignment 7
+## Assignment 7 - Pub/Sub and Serverless w/Cloud Functions
