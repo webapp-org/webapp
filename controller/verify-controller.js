@@ -12,7 +12,7 @@ export const verifyUser = async (req, res) => {
       status: "failed",
       httpRequest: createHttpRequestLog(req, 400),
     });
-    return res.status(400).send("Verification token is missing.");
+    return res.status(400).json({ error: "Verification token is missing." });
   }
 
   try {
@@ -22,14 +22,25 @@ export const verifyUser = async (req, res) => {
       },
     });
 
-    if (user.isVerified) {
+    if (!user) {
+      logger.error({
+        message: "Verification failed: Invalid Token.",
+        action: "Verify User",
+        status: "failed",
+        httpRequest: createHttpRequestLog(req, 404),
+      });
+      console.error("User not found");
+      return res.status(401).json({ error: "Invalid Token." });
+    }
+
+    if (user && user.isVerified) {
       logger.debug({
         message: `User is already verified: ${user.username}`,
         action: "Verify User",
         status: "success",
         httpRequest: createHttpRequestLog(req, 200),
       });
-      return res.status(200).send("Verification successfull");
+      return res.status(200).json({ message: "Verification successful." });
     }
 
     if (new Date() > new Date(user.verificationTokenExpires)) {
@@ -40,18 +51,7 @@ export const verifyUser = async (req, res) => {
         httpRequest: createHttpRequestLog(req, 404),
       });
       console.error("Token has expired");
-      return res.status(401).send("Verification link has expired.");
-    }
-
-    if (!user) {
-      logger.error({
-        message: "Verification failed: User not found.",
-        action: "Verify User",
-        status: "failed",
-        httpRequest: createHttpRequestLog(req, 404),
-      });
-      console.error("User not found");
-      return res.status(404).send();
+      return res.status(401).json({ error: "Verification link has expired." });
     }
 
     user.isVerified = true;
@@ -63,7 +63,7 @@ export const verifyUser = async (req, res) => {
       status: "success",
       httpRequest: createHttpRequestLog(req, 200),
     });
-    return res.status(200).send("Verification successfull");
+    return res.status(200).json({ message: "Verification successful." });
   } catch (error) {
     logger.error({
       message: "Failed to verify user.",
@@ -73,7 +73,7 @@ export const verifyUser = async (req, res) => {
       httpRequest: createHttpRequestLog(req, 500),
     });
     console.error(error);
-    return res.status(500).send("Failed to verify user.");
+    return res.status(500).json({ error: "Failed to verify user." });
   }
 };
 
