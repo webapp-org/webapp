@@ -113,7 +113,7 @@ const authenticateUser = async (req, res, next) => {
         httpRequest: {
           requestMethod: req.method,
           path: req.originalUrl,
-          status: 401,
+          status: 403,
           ip: req.ip,
           userAgent: req.headers["user-agent"],
         },
