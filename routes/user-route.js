@@ -118,7 +118,7 @@ const authenticateUser = async (req, res, next) => {
           userAgent: req.headers["user-agent"],
         },
       });
-      return res.status(401).json();
+      return res.status(403).json();
     }
     const passwordMatch = await bcryptjs.compare(password, user.password);
     if (!passwordMatch) {
