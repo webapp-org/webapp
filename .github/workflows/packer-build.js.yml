@@ -60,6 +60,25 @@ jobs:
             --image=$IMAGE_ID \
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
-            --scopes=cloud-platform
+            --scopes=cloud-platform \
+            --metadata=startup-script='#!/bin/bash
+            # Check if the script has already run
+            if [ -f "/opt/.env_configured" ]; then
+              exit 0
+            fi
+            # Populate the .env file
+            echo "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env
+            echo "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env
+            echo "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env
+            echo "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env
+            echo "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env
+            echo "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env
+            echo "ENV=prod" >> /opt/webapp/.env
+            echo "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env
+            # Mark script as run by creating a file
+            touch /opt/.env_configured' \
+            --region=${{ secrets.REGION }} \
+            --network=projects/${{ secrets.PROJECT_ID }}/global/networks/${{ secrets.VPC_NETWORK_NAME }} \
+            --subnetwork=projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/subnetworks/${{ secrets.SUBNETWORK_NAME }}
           echo "Instance template created with name: $TEMPLATE_NAME"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
