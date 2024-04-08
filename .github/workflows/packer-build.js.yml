@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: ["main"]
 
 jobs:
   build:
@@ -45,7 +47,8 @@ jobs:
         run: |
           IMAGE_ID=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl | grep 'A disk image was created:' | awk '{print $NF}')
           echo "::set-output name=image_id::$IMAGE_ID"
-      - name: Build Packer
+
+      - name: Build New Image
         run: |
           gcloud compute instance-templates create "webapp-template-$(date +%s)" \
             --project=${{ secrets.GCP_PROJECT_ID }} \
