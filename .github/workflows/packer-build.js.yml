@@ -73,7 +73,7 @@ jobs:
         run: |
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
-          TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
+          TEMPLATE_PATH=$(gcloud compute instance-templates create new-temp-4 \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
             --image=packer-1712583464 \
