@@ -45,8 +45,9 @@ jobs:
       - name: Build Packer
         id: packer_build
         run: |
-          IMAGE_ID=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl | grep 'A disk image was created:' | awk '{print $NF}')
-          echo "::set-output name=image_id::$IMAGE_ID"
+          packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl | tee build_output.txt
+          IMAGE_ID=$(grep 'A disk image was created:' build_output.txt | cut -d' ' -f5)
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
       # - name: Build New Image
       #   run: |
@@ -62,7 +63,7 @@ jobs:
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            --image=packer-1712546669 \
+            --image=$IMAGE_ID \
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
             --scopes=cloud-platform
