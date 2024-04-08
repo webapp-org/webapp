@@ -77,6 +77,7 @@ jobs:
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
             --image=packer-1712583464 \
             --region=${{ secrets.REGION }} \
+            --instance-template-region=${{ secrets.REGION }} \
             --subnet=webapp \
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
