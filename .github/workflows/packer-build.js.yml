@@ -41,25 +41,19 @@ jobs:
       - name: Gcloud CLI
         run: gcloud info
 
-      # Command to build packer
       - name: Build Packer
         id: packer_build
         run: |
-          packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl | tee build_output.txt
-          IMAGE_ID=$(grep 'A disk image was created:' build_output.txt | cut -d' ' -f5)
+          PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
+          echo "$PACKER_OUTPUT"
+          IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created:' | awk '{print $NF}')
+          echo "Image ID: $IMAGE_ID"
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-
-      # - name: Build New Image
-      #   run: |
-      #     gcloud compute instance-templates create "webapp-template-$(date +%s)" \
-      #       --project=${{ secrets.GCP_PROJECT_ID }} \
-      #       --image-project=${{ secrets.GCP_PROJECT_ID }} \
-      #       --image="${{ steps.packer_build.outputs.image_id }}" \
-      #       --machine-type=e2-medium
 
       - name: Create Instance Template with New Image
         run: |
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
+          echo "Creating instance template with the image ID: $IMAGE_ID"
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
@@ -67,4 +61,5 @@ jobs:
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
             --scopes=cloud-platform
+          echo "Instance template created with name: $TEMPLATE_NAME"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
