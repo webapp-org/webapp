@@ -79,5 +79,6 @@ jobs:
             touch /opt/.env_configured' \
             --region=${{ secrets.REGION }} \
             --subnet=webapp \
+            \
           echo "Instance template created with name: $TEMPLATE_NAME"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
