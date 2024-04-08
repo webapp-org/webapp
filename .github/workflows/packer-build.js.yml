@@ -64,6 +64,6 @@ jobs:
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
             --image="${{ steps.packer_build.outputs.image_id }}" \
             --tags=http-server,https-server \
-            --service-account={{ secrets.SERVICE_ACCOUNT_EMAIL }} \
+            --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
             --scopes=cloud-platform
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
