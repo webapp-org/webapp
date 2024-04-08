@@ -78,7 +78,7 @@ jobs:
             # Mark script as run by creating a file
             touch /opt/.env_configured' \
             --region=${{ secrets.REGION }} \
-            --network=projects/${{ secrets.PROJECT_ID }}/global/networks/${{ secrets.VPC_NETWORK_NAME }} \
-            # --subnetwork=projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/subnetworks/${{ secrets.SUBNETWORK_NAME }}
+            --network=projects/${{ secrets.GCP_PROJECT_ID }}/global/networks/${{ secrets.VPC_NETWORK_NAME }} \
+            --subnetwork=projects/${{ secrets.GCP_PROJECT_ID }}/regions/${{ secrets.REGION }}/subnetworks/${{ secrets.SUBNETWORK_NAME }}
           echo "Instance template created with name: $TEMPLATE_NAME"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
