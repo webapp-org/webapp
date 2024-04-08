@@ -41,4 +41,14 @@ jobs:
 
       # Command to build packer
       - name: Build Packer
-        run: packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl
+        id: packer_build
+        run: |
+          IMAGE_ID=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl | grep 'A disk image was created:' | awk '{print $NF}')
+          echo "::set-output name=image_id::$IMAGE_ID"
+      - name: Build Packer
+        run: |
+          gcloud compute instance-templates create "webapp-template-$(date +%s)" \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --image-project=${{ secrets.GCP_PROJECT_ID }} \
+            --image="${{ steps.packer_build.outputs.image_id }}" \
+            --machine-type=e2-medium
