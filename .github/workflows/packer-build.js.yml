@@ -79,7 +79,7 @@ jobs:
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
             --region=${{ secrets.REGION }} \
-            --instance-template-region=${{ secrets.REGION }} \
+            # --instance-template-region=${{ secrets.REGION }} \
             --subnet=webapp \
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
@@ -92,11 +92,11 @@ jobs:
       - name: Start MIG Rolling Update
         id: mig_update
         run: |
-          # gcloud compute instance-groups managed rolling-action start-update ${{ secrets.MIG_NAME }} \
-          gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
-            # --version template=${TEMPLATE_NAME} \
-            --version template=hello-new-1 \
-            --region ${{ secrets.REGION }} \
-            --type proactive \
-            --max-surge fixed=1 \
-            --max-unavailable fixed=1
+          # # gcloud compute instance-groups managed rolling-action start-update ${{ secrets.MIG_NAME }} \
+          # gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
+          #   # --version template=${TEMPLATE_NAME} \
+          #   --version template=hello-new-1 \
+          #   --region ${{ secrets.REGION }} \
+          #   --type proactive \
+          #   --max-surge fixed=1 \
+          #   --max-unavailable fixed=1
