@@ -72,21 +72,6 @@ jobs:
         run: |
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: "
-          METADATA_SCRIPT=$(cat <<EOF
-            #!/bin/bash
-            # Populate the .env file
-            echo "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env
-            echo "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env
-            echo "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env
-            echo "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env
-            echo "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env
-            echo "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env
-            echo "ENV=prod" >> /opt/webapp/.env
-            echo "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env
-            # Mark script as run by creating a file
-            touch /opt/.env_configured
-            EOF
-            )
           gcloud compute instance-templates create test-new-1 \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
@@ -95,8 +80,7 @@ jobs:
             --subnet=webapp \
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
-            --scopes=cloud-platform \
-            --metadata=startup-script="$METADATA_SCRIPT"
-
+            --scopes=cloud-platform \ 
+            --metadata=startup-script="#!/bin/bash\n# Check if the script has already run\nif [ -f /opt/.env_configured ]; then\n  exit 0\nfi\n# Populate the .env file\necho DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }} > /opt/webapp/.env\necho USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }} >> /opt/webapp/.env\necho PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }} >> /opt/webapp/.env\necho HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }} >> /opt/webapp/.env\necho PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }} >> /opt/webapp/.env\necho DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }} >> /opt/webapp/.env\necho ENV=prod >> /opt/webapp/.env\necho PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }} >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured"
           echo "Instance template created with name: $TEMPLATE_NAME"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
