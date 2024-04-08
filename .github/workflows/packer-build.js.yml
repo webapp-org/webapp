@@ -87,3 +87,16 @@ jobs:
             --metadata=startup-script=$'#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured'
           echo "Instance template created with name: $TEMPLATE_NAME"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
+
+      # Step to start a rolling update on the MIG
+      - name: Start MIG Rolling Update
+        id: mig_update
+        run: |
+          # gcloud compute instance-groups managed rolling-action start-update ${{ secrets.MIG_NAME }} \
+          gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
+            # --version template=${TEMPLATE_NAME} \
+            --version template=hello-new-1 \
+            --region ${{ secrets.REGION }} \
+            --type proactive \
+            --max-surge fixed=1 \
+            --max-unavailable fixed=1
