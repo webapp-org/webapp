@@ -62,7 +62,7 @@ jobs:
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            --image="${{ steps.packer_build.outputs.image_id }}" \
+            --image=packer-1712546669 \
             --tags=http-server,https-server \
             --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
             --scopes=cloud-platform
