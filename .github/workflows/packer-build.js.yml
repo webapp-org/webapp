@@ -46,9 +46,9 @@ jobs:
         run: |
           PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
           echo "$PACKER_OUTPUT"
-          IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created:' | awk '{print $NF}')
+          IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created:' | awk '{print $8}')
+          echo "::set-output name=image_id::$IMAGE_ID"
           echo "Image ID: $IMAGE_ID"
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         run: |
