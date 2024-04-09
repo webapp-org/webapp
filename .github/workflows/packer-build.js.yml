@@ -51,7 +51,7 @@ jobs:
       #     echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
       # --image=packer-1712628335 \
-      # --image=$IMAGE_ID \
+      # --image=$IMAGE_ID  \
 
       - name: Create Instance Template with New Image
         id: create_template
