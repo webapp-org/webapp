@@ -93,7 +93,7 @@ jobs:
             echo "Current version target status: isReached=$IS_REACHED"
             
             # Exit loop if the version target is reached
-            if [[ "$IS_REACHED" == "true" ]]; then
+            if [[ "$IS_REACHED" == "True" ]]; then
               echo "MIG version target reached successfully."
               break
             else
