@@ -94,4 +94,4 @@ jobs:
           echo "Updating MIG with instance template: $TEMPLATE_PATH"
           gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
             --version template=$TEMPLATE_PATH \
-            --region us-east1
+            --region ${{ secrets.REGION }}
