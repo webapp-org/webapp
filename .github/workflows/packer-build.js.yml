@@ -50,6 +50,8 @@ jobs:
       #     echo "IMAGE_ID=$IMAGE_ID"
       #     echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
+      # --image=$IMAGE_ID \
+
       - name: Create Instance Template with New Image
         id: create_template
         run: |
@@ -58,7 +60,6 @@ jobs:
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            # --image=$IMAGE_ID \
             --image=packer-1712628335 \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
