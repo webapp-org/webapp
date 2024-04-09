@@ -41,6 +41,12 @@ jobs:
       - name: Gcloud CLI
         run: gcloud info
 
+      - name: Access DB_PASSWORD Secret
+        run: |
+          DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --project="${{ secrets.GCP_PROJECT_ID }}")
+          echo "DB_PASSWORD=$DB_PASSWORD"
+          # Use DB_PASSWORD as needed here, but do not print it to logs
+
       # - name: Build Packer
       #   id: packer_build
       #   run: |
