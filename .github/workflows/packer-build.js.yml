@@ -50,43 +50,42 @@ jobs:
           echo "IMAGE_ID=$IMAGE_ID"
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
-      - name: Create Instance Template with New Image
-        run: |
-          TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
-          echo "Creating instance template with the image ID: $IMAGE_ID"
-          gcloud compute instance-templates create $TEMPLATE_NAME \
-            --machine-type=e2-medium \
-            --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            --image=$IMAGE_ID \
-            --region=${{ secrets.REGION }} \
-            --subnet=webapp \
-            --tags=deny-all,allow-8080 \
-            --tags=http-server,https-server \
-            --scopes=cloud-platform \
-            --metadata=startup-script=$'#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
-
-          echo "Instance template created with name: $TEMPLATE_NAME"
-          echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
-
       # - name: Create Instance Template with New Image
-      #   id: create_template
       #   run: |
       #     TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
       #     echo "Creating instance template with the image ID: $IMAGE_ID"
-      #     TEMPLATE_PATH=$(gcloud compute instance-templates create new-temp-9 \
+      #     gcloud compute instance-templates create $TEMPLATE_NAME \
       #       --machine-type=e2-medium \
       #       --image-project=${{ secrets.GCP_PROJECT_ID }} \
-      #       --image=packer-1712602258 \
-      #       --boot-disk-type=pd-balanced \
-      #       --boot-disk-size=50 \
+      #       --image=$IMAGE_ID \
       #       --region=${{ secrets.REGION }} \
       #       --subnet=webapp \
       #       --tags=deny-all,allow-8080 \
-      #       --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
+      #       --tags=http-server,https-server \
       #       --scopes=cloud-platform \
       #       --metadata=startup-script=$'#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
-      #     echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
-      #     echo "Instance template created with path: $TEMPLATE_PATH"
+
+      #     echo "Instance template created with name: $TEMPLATE_NAME"
+      #     echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
+
+      - name: Create Instance Template with New Image
+        id: create_template
+        run: |
+          TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
+          echo "Creating instance template with the image ID: $IMAGE_ID"
+          TEMPLATE_PATH=$(gcloud compute instance-templates $TEMPLATE_NAME \
+            --machine-type=e2-medium \
+            --image-project=${{ secrets.GCP_PROJECT_ID }} \
+            --image=$IMAGE_ID \
+            --boot-disk-type=pd-balanced \
+            --boot-disk-size=50 \
+            --region=${{ secrets.REGION }} \
+            --subnet=webapp \
+            --tags=deny-all,allow-8080 \
+            --scopes=cloud-platform \
+            --metadata=startup-script=$'#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
+          echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
+          echo "Instance template created with path: $TEMPLATE_PATH"
 
       - name: Update Managed Instance Group with New Template
         run: |
