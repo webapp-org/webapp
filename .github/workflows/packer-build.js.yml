@@ -80,7 +80,7 @@ jobs:
             --version template=$TEMPLATE_PATH \
             --region ${{ secrets.REGION }}
 
-      - name: Wait for MIG Update Version Target to be Reached
+      - name: Wait for managed instance group refresh to complete
         run: |
           REGION=${{ secrets.REGION }}
           MIG_NAME=webapp-region-mig
@@ -89,11 +89,11 @@ jobs:
           # Loop until the version target is reached
           while true; do
             # Check if all VMs have reached their target template version
-            IS_REACHED=$(gcloud compute instance-groups managed describe $MIG_NAME --region $REGION --format="value(status.versionTarget.isReached)")
+            IS_REACHED=$(gcloud compute instance-groups managed describe $MIG_NAME --region $REGION --format="value(status.versionTarget.isReached)" | tr -d '[:space:]')
             echo "Current version target status: isReached=$IS_REACHED"
             
             # Exit loop if the version target is reached
-            if [ "$IS_REACHED" = "true" ]; then
+            if [[ "$IS_REACHED" == "true" ]]; then
               echo "MIG version target reached successfully."
               break
             else
