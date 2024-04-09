@@ -82,23 +82,6 @@ jobs:
 
       - name: Wait for managed instance group refresh to complete
         run: |
-          REGION=${{ secrets.REGION }}
-          MIG_NAME=webapp-region-mig
-          echo "Waiting for MIG version target to be reached..."
-
-          # Loop until the version target is reached
-          while true; do
-            # Check if all VMs have reached their target template version
-            IS_REACHED=$(gcloud compute instance-groups managed describe $MIG_NAME --region $REGION --format="value(status.versionTarget.isReached)" | tr -d '[:space:]')
-            echo "Current version target status: isReached=$IS_REACHED"
-            
-            # Exit loop if the version target is reached
-            if [[ "$IS_REACHED" == "True" ]]; then
-              echo "MIG version target reached successfully."
-              break
-            else
-              echo "MIG version target not yet reached. Waiting..."
-              # Wait for a short period before checking again
-              sleep 60
-            fi
-          done
+          gcloud compute instance-groups managed wait-until webapp-region-mig \
+            --version-target-reached \
+            --region ${{ secrets.REGION }}
