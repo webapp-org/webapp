@@ -6,18 +6,18 @@ export const healthCheck = async (req, res) => {
     await db.sequelize.authenticate();
     res.json();
     // success log
-    logger.info({
-      message: "Health check successful",
-      action: "Health Check API",
-      status: "success",
-      httpRequest: {
-        method: req.method,
-        url: req.url,
-        userAgent: req.headers["user-agent"],
-        ip: req.ip,
-        status: res.statusCode,
-      },
-    });
+    // logger.info({
+    //   message: "Health check successful",
+    //   action: "Health Check API",
+    //   status: "success",
+    //   httpRequest: {
+    //     method: req.method,
+    //     url: req.url,
+    //     userAgent: req.headers["user-agent"],
+    //     ip: req.ip,
+    //     status: res.statusCode,
+    //   },
+    // });
   } catch (error) {
     // error log
     logger.error({
