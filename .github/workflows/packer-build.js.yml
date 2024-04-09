@@ -65,6 +65,7 @@ jobs:
             --image=packer-1712628335 \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
+            --instance-template-region=${{ secrets.REGION }} \
             --region=${{ secrets.REGION }} \
             --subnet=webapp \
             --tags=deny-all,allow-8080 \
