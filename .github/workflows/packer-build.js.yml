@@ -76,7 +76,7 @@ jobs:
           TEMPLATE_PATH=$(gcloud compute instance-templates create new-temp-10 \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            --image=packer-1712602258 \
+            --image=$IMAGE_ID \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
             --region=${{ secrets.REGION }} \
