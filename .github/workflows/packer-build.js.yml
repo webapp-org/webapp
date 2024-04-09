@@ -60,10 +60,10 @@ jobs:
       #       --image=$IMAGE_ID \
       #       --region=${{ secrets.REGION }} \
       #       --subnet=webapp \
-      #       --tags=deny-all,allow-8080 \
       #       --tags=http-server,https-server \
+      #       --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
       #       --scopes=cloud-platform \
-      #       --metadata=startup-script=$'#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
+      #       --metadata=startup-script='#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured'; \
 
       #     echo "Instance template created with name: $TEMPLATE_NAME"
       #     echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
@@ -73,15 +73,16 @@ jobs:
         run: |
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
-          TEMPLATE_PATH=$(gcloud compute instance-templates $TEMPLATE_NAME \
+          TEMPLATE_PATH=$(gcloud compute instance-templates create new-temp-10 \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            --image=$IMAGE_ID \
+            --image=packer-1712602258 \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
             --region=${{ secrets.REGION }} \
             --subnet=webapp \
             --tags=deny-all,allow-8080 \
+            --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
             --scopes=cloud-platform \
             --metadata=startup-script=$'#!/bin/bash\n# Check if the script has already run\nif [ -f "/opt/.env_configured" ]; then\n  exit 0\nfi\n# Populate the .env file\necho "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\necho "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\necho "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\necho "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\necho "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\necho "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\necho "ENV=prod" >> /opt/webapp/.env\necho "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n# Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
@@ -93,4 +94,4 @@ jobs:
           echo "Updating MIG with instance template: $TEMPLATE_PATH"
           gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
             --version template=$TEMPLATE_PATH \
-            --region ${{ secrets.REGION }}
+            --region us-east1
