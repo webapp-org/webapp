@@ -52,7 +52,7 @@ jobs:
 
       # --image=packer-1712628335 \
       # --image=$IMAGE_ID  \
-      # --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }} \
+      # --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }}  \
 
       - name: Create Instance Template with New Image
         id: create_template
