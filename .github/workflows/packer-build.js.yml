@@ -45,14 +45,15 @@ jobs:
         run: |
           echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")"
           echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")"
-          echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
-          echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
-          echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
-          echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
-          echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
-          echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
-          echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
-          echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
+
+          # echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
+          # echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
+          # echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
+          # echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
+          # echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
+          # echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
+          # echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
+          # echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
 
       - name: Fetch Secrets from Google  Secret Manager
         run: |
@@ -96,9 +97,9 @@ jobs:
             --instance-template-region=$PROJECT_REGION \
             --region=$PROJECT_REGION \
             --subnet=webapp \
-            --tags=["deny-all", "allow-8080"] \
+            --tags="deny-all", "allow-8080" \
             --service-account=vm-service-account@csye6225-dev-415023.iam.gserviceaccount.com \
-            --scopes=["https://www.googleapis.com/auth/cloud-platform"] \
+            --scopes="https://www.googleapis.com/auth/cloud-platform" \
             --metadata=startup-script=$'
             #!/bin/bash
             # Check if the script has already run
