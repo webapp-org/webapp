@@ -72,6 +72,7 @@ jobs:
 
       - name: Fetch Secrets from Google Secret Manager
         run: |
+          echo "DB_PASSWORD123=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
           echo "DB_PASSWORD1=$(gcloud secrets versions access latest --secret="DB_PASSWORD")" >> $GITHUB_ENV
           echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret='DB_PASSWORD' --format='value(payload.data)' --project='${{ secrets.GCP_PROJECT_ID }}' | base64 --decode)" >> $GITHUB_ENV
           echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret='CLOUD_SQL_INSTANCE_PRIVATE_IP' --format='value(payload.data)' --project='${{ secrets.GCP_PROJECT_ID }}' | base64 --decode)" >> $GITHUB_ENV
