@@ -88,6 +88,7 @@ jobs:
       # Build Packer Image
       # - name: Build Packer
       #   run: |
+
       #     PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
       #     echo "$PACKER_OUTPUT"
       #     IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
