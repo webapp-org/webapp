@@ -137,13 +137,19 @@ jobs:
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
           echo "Instance template created with path: $TEMPLATE_PATH"
 
+      - name: Set Instance Group
+        run: |
+          gcloud compute instance-groups managed set-instance-template $VM_TEMPLATE_MIG_NAME \
+          --template=$TEMPLATE_PATH \
+          --region=$PROJECT_REGION \
+
       - name: Update Managed Instance Group with New Template
         run: |
           TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
           echo "Updating MIG with instance template: $TEMPLATE_PATH"
           gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
             --version template=$TEMPLATE_PATH \
-            --region $PROJECT_REGION
+            --region $PROJECT_REGION \
             --type=proactive
 
       - name: Wait for managed instance group refresh to complete
