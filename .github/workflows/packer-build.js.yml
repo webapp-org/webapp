@@ -48,9 +48,33 @@ jobs:
             DB_PASSWORD:db-password
             echo "DB_PASSWORD=$DB_PASSWORD"
 
+      - id: "secrets"
+        name: "Fetch Secrets from Secret Manager"
+        uses: "google-github-actions/get-secretmanager-secrets@v2"
+        with:
+          secrets: |-
+            PASSWORD:${{ secrets.GCP_PROJECT_ID }}/DB_PASSWORD
+            HOST:${{ secrets.GCP_PROJECT_ID }}/CLOUD_SQL_INSTANCE_PRIVATE_IP
+
+      # - id: 'secrets'
+      #   name: 'Fetch Secrets from Secret Manager'
+      #   uses: 'google-github-actions/get-secretmanager-secrets@v2'
+      #   with:
+      #     secrets: |-
+      #       DATABASE:my-project/CLOUD_SQL_DATABASE_NAME
+      #       USERNAME:my-project/CLOUD_SQL_DATABASE_USER_NAME
+      #       PASSWORD:my-project/DB_PASSWORD
+      #       HOST:my-project/CLOUD_SQL_INSTANCE_PRIVATE_IP
+      #       PORT:my-project/CLOUD_SQL_DATABASE_PORT
+      #       DOMAIN_NAME:my-project/PROD_DOMAIN_NAME
+      #       ENV:my-project/ENV
+      #       PUBSUB_TOPIC_NAME:my-project/PUBSUB_TOPIC_NAME
+
+      # Example of using the outputs
       - name: "Use the Secrets"
         run: |
-          echo "Using DB_PASSWORD: $DB_PASSWORD"
+          echo "Database: ${{ steps.secrets.outputs.DB_PASSWORD }}"
+          echo "Username: ${{ steps.secrets.outputs.CLOUD_SQL_INSTANCE_PRIVATE_IP }}"
 
       # - name: Build Packer
       #   id: packer_build
