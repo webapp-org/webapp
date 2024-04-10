@@ -41,39 +41,10 @@ jobs:
       - name: Gcloud CLI
         run: gcloud info
 
-      # - name: Access DB_PASSWORD Secret
-      #   uses: google-github-actions/get-secretmanager-secrets@v0.5.0 # Use the latest version available
-      #   with:
-      #     secrets: |
-      #       DB_PASSWORD:db-password
-      #       echo "DB_PASSWORD=$DB_PASSWORD"
-
-      # - id: "secrets"
-      #   name: "Fetch Secrets from Secret Manager"
-      #   uses: "google-github-actions/get-secretmanager-secrets@v2"
-      #   with:
-      #     secrets: |-
-      #       PASSWORD:${{ secrets.GCP_PROJECT_ID }}/DB_PASSWORD
-      #       HOST:${{ secrets.GCP_PROJECT_ID }}/CLOUD_SQL_INSTANCE_PRIVATE_IP
-
-      # - id: 'secrets'
-      #   name: 'Fetch Secrets from Secret Manager'
-      #   uses: 'google-github-actions/get-secretmanager-secrets@v2'
-      #   with:
-      #     secrets: |-
-      #       DATABASE:my-project/CLOUD_SQL_DATABASE_NAME
-      #       USERNAME:my-project/CLOUD_SQL_DATABASE_USER_NAME
-      #       PASSWORD:my-project/DB_PASSWORD
-      #       HOST:my-project/CLOUD_SQL_INSTANCE_PRIVATE_IP
-      #       PORT:my-project/CLOUD_SQL_DATABASE_PORT
-      #       DOMAIN_NAME:my-project/PROD_DOMAIN_NAME
-      #       ENV:my-project/ENV
-      #       PUBSUB_TOPIC_NAME:my-project/PUBSUB_TOPIC_NAME
-
       - name: Fetch Secrets from Google Secret Manager
         run: |
-          echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
-          echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
+          echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")" >> $GITHUB_ENV
 
       # - name: Build Packer
       #   id: packer_build
@@ -89,41 +60,41 @@ jobs:
 
       # --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }}  \
 
-      # - name: Create Instance Template with New Image
-      #   id: create_template
-      #   run: |
-      #     TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
-      #     echo "Creating instance template with the image ID: $IMAGE_ID"
-      #     TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
-      #       --machine-type=e2-medium \
-      #       --image-project=${{ secrets.GCP_PROJECT_ID }} \
-      #       --image=packer-1712628335 \
-      #       --boot-disk-type=pd-balanced \
-      #       --boot-disk-size=50 \
-      #       --instance-template-region=${{ secrets.REGION }} \
-      #       --region=${{ secrets.REGION }} \
-      #       --subnet=webapp \
-      #       --tags=deny-all,allow-8080 \
-      #       --service-account=vm-service-account@csye6225-dev-415023.iam.gserviceaccount.com \
-      #       --scopes=cloud-platform \
-      #       --metadata=startup-script=$'
-      #       #!/bin/bash\n
-      #       # Check if the script has already run\n
-      #       if [ -f "/opt/.env_configured" ]; then\n
-      #       exit 0\n
-      #       fi\n
-      #       # Populate the .env file\n
-      #       echo "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\n
-      #       echo "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\n
-      #       echo "PASSWORD=${{ secrets.CLOUD_SQL_DB_PASSWORD }}" >> /opt/webapp/.env\n
-      #       echo "HOST=${{ secrets.CLOUD_SQL_INSTANCE_PRIVATE_IP_ADDRESS }}" >> /opt/webapp/.env\n
-      #       echo "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\n
-      #       echo "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\n
-      #       echo "ENV=prod" >> /opt/webapp/.env\n
-      #       echo "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n
-      #       # Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
-      #     echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
-      #     echo "Instance template created with path: $TEMPLATE_PATH"
+      - name: Create Instance Template with New Image
+        id: create_template
+        run: |
+          TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
+          echo "Creating instance template with the image ID: $IMAGE_ID"
+          TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
+            --machine-type=e2-medium \
+            --image-project=${{ secrets.GCP_PROJECT_ID }} \
+            --image=packer-1712628335 \
+            --boot-disk-type=pd-balanced \
+            --boot-disk-size=50 \
+            --instance-template-region=${{ secrets.REGION }} \
+            --region=${{ secrets.REGION }} \
+            --subnet=webapp \
+            --tags=deny-all,allow-8080 \
+            --service-account=vm-service-account@csye6225-dev-415023.iam.gserviceaccount.com \
+            --scopes=cloud-platform \
+            --metadata=startup-script=$'
+            #!/bin/bash\n
+            # Check if the script has already run\n
+            if [ -f "/opt/.env_configured" ]; then\n
+            exit 0\n
+            fi\n
+            # Populate the .env file\n
+            echo "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\n
+            echo "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\n
+            echo "PASSWORD=$DB_PASSWORD" >> /opt/webapp/.env\n
+            echo "HOST=$CLOUD_SQL_INSTANCE_PRIVATE_IP" >> /opt/webapp/.env\n
+            echo "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\n
+            echo "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\n
+            echo "ENV=prod" >> /opt/webapp/.env\n
+            echo "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n
+            # Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
+          echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
+          echo "Instance template created with path: $TEMPLATE_PATH"
 
       # - name: Update Managed Instance Group with New Template
       #   run: |
@@ -138,17 +109,3 @@ jobs:
       #     gcloud compute instance-groups managed wait-until webapp-region-mig \
       #       --version-target-reached \
       #       --region ${{ secrets.REGION }}
-
-      # - name: Get secrets from Secret Manager
-      #   id: get_secrets
-      #   uses: google-github-actions/get-secretmanager-secrets@v0
-      #   with:
-      #     secrets: |
-      #       CLOUD_SQL_INSTANCE_PRIVATE_IP:db-private-ip
-      #       DB_PASSWORD:db-password
-
-      # # Debugging step to echo the secrets - Use with caution!
-      # - name: Echo Secrets for Debugging
-      #   run: |
-      #     echo "Database Private IP: ${{ steps.get_secrets.outputs.db-private-ip }}"
-      #     echo "Database Password: ${{ steps.get_secrets.outputs.db-password }}"
