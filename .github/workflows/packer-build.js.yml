@@ -45,6 +45,13 @@ jobs:
         run: |
           echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")"
           echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_MACHINE_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_MACHINE_TYPE" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_BOOT_DISK_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_TYPE" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_BOOT_DISK_SIZE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_SIZE" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_SERVICE_ACCOUNT=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SERVICE_ACCOUNT" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_SUBNET=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SUBNET" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_TAGS=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_TAGS" --format="value(payload.data)")"
 
 
           # echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
@@ -95,7 +102,7 @@ jobs:
             --image=$IMAGE_ID \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
-            --boot-disk-kms-key=${{ env.VM_KMS_KEY}} \
+            --boot-disk-kms-key=$VM_KMS_KEY \
             --instance-template-region=$PROJECT_REGION \
             --region=$PROJECT_REGION \
             --subnet=webapp \
