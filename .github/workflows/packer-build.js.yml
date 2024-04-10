@@ -75,9 +75,17 @@ jobs:
 
       # --service-account=${{ secrets.SERVICE_ACCOUNT_EMAIL }}  \
 
+      # - name: Create Instance Template with New Image
+      #   id: create_template
+      #   run: |
+      #     TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
+      #     KMS_KEY="projects/csye6225-dev-415023/locations/us-east1/keyRings/webapp-key-ring-85a33436/cryptoKeys/my-vm-key/cryptoKeyVersions/1"
+      #     echo "Using KMS Key: $KMS_KEY
+
       - name: Create Instance Template with New Image
         id: create_template
         run: |
+          KMS_KEY="projects/csye6225-dev-415023/locations/us-east1/keyRings/webapp-key-ring-85a33436/cryptoKeys/my-vm-key/cryptoKeyVersions/1"
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
@@ -86,6 +94,7 @@ jobs:
             --image=packer-1712628335 \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
+            --boot-disk-kms-key=$KMS_KEY \
             --instance-template-region=${{ secrets.REGION }} \
             --region=${{ secrets.REGION }} \
             --subnet=webapp \
