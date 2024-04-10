@@ -88,19 +88,19 @@ jobs:
         run: |
           PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
           echo "$PACKER_OUTPUT"
-          PACLER_IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
-          echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID"
-          echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID" >> $GITHUB_ENV
+          PACkER_IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
+          echo "PACkER_IMAGE_ID=$PACkER_IMAGE_ID"
+          echo "PACkER_IMAGE_ID=$PACkER_IMAGE_ID" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         id: create_template
         run: |
           TEMPLATE_NAME="webapp-template-${{ github.sha }}"
-          echo "Creating instance template with the image ID: $PACLER_IMAGE_ID"
+          echo "Packer Image ID: $PACkER_IMAGE_ID"
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=$VM_TEMPLATE_MACHINE_TYPE \
             --image-project=$PROJECT_ID \
-            --image=$PACLER_IMAGE_ID \
+            --image=$PACkER_IMAGE_ID \
             --boot-disk-type=$VM_TEMPLATE_BOOT_DISK_TYPE \
             --boot-disk-size=$VM_TEMPLATE_BOOT_DISK_SIZE \
             --boot-disk-kms-key=$VM_KMS_KEY \
@@ -128,7 +128,6 @@ jobs:
             # Mark script as run by creating a file
             touch /opt/.env_configured' --format="value(selfLink)")
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
-          echo "Instance template created with path: $TEMPLATE_PATH"
 
       - name: Set Instance Group to Managed Instance Group
         run: |
