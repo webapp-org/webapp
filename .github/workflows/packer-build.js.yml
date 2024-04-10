@@ -85,19 +85,24 @@ jobs:
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")" >> $GITHUB_ENV
 
+      # - name: Build Packer
+      #   id: packer_build
+      #   run: |
+      #     PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
+      #     echo "$PACKER_OUTPUT"
+      #     IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
+      #     echo "IMAGE_ID=$IMAGE_ID"
+      #     echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
       - name: Build Packer
         id: packer_build
         run: |
-          PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
-          echo "$PACKER_OUTPUT"
-          IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
-          echo "IMAGE_ID=$IMAGE_ID"
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "IMAGE_ID=packer-1712723143"
+          echo "IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         id: create_template
         run: |
-          TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
+          TEMPLATE_NAME="webapp-template-${{ github.sha }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=$VM_TEMPLATE_MACHINE_TYPE \
@@ -143,7 +148,7 @@ jobs:
           TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
           echo "Updating MIG with instance template: $TEMPLATE_PATH"
           gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
-            --max-unavailable=0 \
+            --max-surge=2 \
             --version template=$TEMPLATE_PATH \
             --region $PROJECT_REGION \
             --type=proactive
