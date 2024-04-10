@@ -154,9 +154,15 @@ jobs:
 
       - name: Wait for managed instance group refresh to complete
         run: |
-          STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
-          while [[ $STATUS == 'UPDATING' ]]; do
-            echo "Instance group update in Progress.."
-            sleep 20
-            STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
-          done
+          gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
+            --version-target-reached \
+            --region $PROJECT_REGION
+
+      # - name: Wait for managed instance group refresh to complete
+      #   run: |
+      #     STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
+      #     while [[ $STATUS == 'UPDATING' ]]; do
+      #       echo "Instance group update in Progress.."
+      #       sleep 20
+      #       STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
+      #     done
