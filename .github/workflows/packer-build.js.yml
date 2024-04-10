@@ -144,6 +144,7 @@ jobs:
           gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
             --version template=$TEMPLATE_PATH \
             --region $PROJECT_REGION
+            --type=proactive
 
       - name: Wait for managed instance group refresh to complete
         run: |
