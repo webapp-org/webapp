@@ -54,14 +54,14 @@ jobs:
       #     echo "VM_TEMPLATE_SUBNET=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SUBNET" --format="value(payload.data)")"
       #     echo "VM_TEMPLATE_TAGS=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_TAGS" --format="value(payload.data)")"
 
-      #     echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
-      #     echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
-      #     echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
-      #     echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
-      #     echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
-      #     echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
-      #     echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
-      #     echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
+      #     # echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
+      #     # echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
+      #     # echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
+      #     # echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
+      #     # echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
+      #     # echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
+      #     # echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
+      #     # echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
 
       - name: Fetch Secrets from Google  Secret Manager
         run: |
@@ -85,23 +85,20 @@ jobs:
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")" >> $GITHUB_ENV
 
-      # Build Packer Image
       # - name: Build Packer
+      #   id: packer_build
       #   run: |
-
       #     PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
       #     echo "$PACKER_OUTPUT"
       #     IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
       #     echo "IMAGE_ID=$IMAGE_ID"
       #     echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-
       - name: Build Packer
         id: packer_build
         run: |
           echo "IMAGE_ID=packer-1712723143"
           echo "IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
 
-      # Create Instance Template With New Image
       - name: Create Instance Template with New Image
         id: create_template
         run: |
@@ -140,7 +137,6 @@ jobs:
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
           echo "Instance template created with path: $TEMPLATE_PATH"
 
-      # Start MIG Rolling Update
       - name: Update Managed Instance Group with New Template
         run: |
           TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
@@ -149,12 +145,8 @@ jobs:
             --version template=$TEMPLATE_PATH \
             --region $PROJECT_REGION
 
-      # Check MIG Update Status
-      - name: Wait for MIG Refresh
+      - name: Wait for managed instance group refresh to complete
         run: |
-          STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
-          while [[ $STATUS == 'UPDATING' ]]; do
-            echo "Instance group update in Progess..."
-            sleep 20
-            STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
-          done
+          gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
+            --version-target-reached \
+            --region $PROJECT_REGION
