@@ -67,6 +67,7 @@ jobs:
         run: |
           echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_MIG_NAME=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_MIG_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_TEMPLATE_MACHINE_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_MACHINE_TYPE" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_TEMPLATE_BOOT_DISK_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_TYPE" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_TEMPLATE_BOOT_DISK_SIZE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_SIZE" --format="value(payload.data)")" >> $GITHUB_ENV
@@ -138,28 +139,21 @@ jobs:
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
           echo "Instance template created with path: $TEMPLATE_PATH"
 
-      # Update MIG
+      # Start MIG Rolling Update
       - name: Update Managed Instance Group with New Template
         run: |
           TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
-          echo "Updating MIG with instance template: $TEMPLATE_PATH $VM_TEMPLATE_MIG_NAME // {{env.VM_TEMPLATE_MIG_NAME}}"
-          gcloud compute instance-groups managed rolling-action start-update ${{env.VM_TEMPLATE_MIG_NAME}} \
+          echo "Updating MIG with instance template: $TEMPLATE_PATH"
+          gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
             --version template=$TEMPLATE_PATH \
             --region $PROJECT_REGION
 
-      # Start MIG Rolling Update
-      # - name: Start Rolling Update
-      #   run: |
-      #     gcloud compute instance-groups managed wait-until ${{env.VM_TEMPLATE_MIG_NAME}} \
-      #       --version-target-reached \
-      #       --region $PROJECT_REGION
-
-      # # Check MIG Update Status
-      # - name: Wait for MIG Refresh
-      #   run: |
-      #     STATUS=$(gcloud compute instance-groups managed describe app-instance-group-managers --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
-      #     while [[ $STATUS == 'UPDATING' ]]; do
-      #       echo "Instance group update in Progess..."
-      #       sleep 20
-      #       STATUS=$(gcloud compute instance-groups managed describe app-instance-group-managers --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
-      #     done
+      # Check MIG Update Status
+      - name: Wait for MIG Refresh
+        run: |
+          STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
+          while [[ $STATUS == 'UPDATING' ]]; do
+            echo "Instance group update in Progess..."
+            sleep 20
+            STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
+          done
