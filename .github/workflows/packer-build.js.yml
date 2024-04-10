@@ -84,15 +84,16 @@ jobs:
             exit 0\n
             fi\n
             # Populate the .env file\n
-            echo "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env\n
-            echo "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env\n
-            echo "PASSWORD=$DB_PASSWORD" >> /opt/webapp/.env\n
-            echo "HOST=$CLOUD_SQL_INSTANCE_PRIVATE_IP" >> /opt/webapp/.env\n
-            echo "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env\n
-            echo "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env\n
-            echo "ENV=prod" >> /opt/webapp/.env\n
-            echo "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env\n
-            # Mark script as run by creating a file\ntouch /opt/.env_configured' --format="value(selfLink)")
+            echo "DATABASE=${{ secrets.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env
+            echo "USERNAME=${{ secrets.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env
+            echo "PASSWORD=${{ env.DB_PASSWORD }}\" >> /opt/webapp/.env
+            echo "HOST=${{ env.CLOUD_SQL_INSTANCE_PRIVATE_IP }}\" >> /opt/webapp/.env
+            echo "PORT=${{ secrets.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env
+            echo "DOMAIN_NAME=${{ secrets.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env
+            echo "ENV=prod" >> /opt/webapp/.env
+            echo "PUBSUB_TOPIC_NAME=${{ secrets.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env
+            # Mark script as run by creating a file
+            touch /opt/.env_configured' --format="value(selfLink)")
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
           echo "Instance template created with path: $TEMPLATE_PATH"
 
