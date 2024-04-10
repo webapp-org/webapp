@@ -97,7 +97,7 @@ jobs:
             --instance-template-region=$PROJECT_REGION \
             --region=$PROJECT_REGION \
             --subnet=webapp \
-            --tags="deny-all", "allow-8080" \
+            --tags=deny-all,allow-8080 \
             --service-account=vm-service-account@csye6225-dev-415023.iam.gserviceaccount.com \
             --scopes="https://www.googleapis.com/auth/cloud-platform" \
             --metadata=startup-script=$'
