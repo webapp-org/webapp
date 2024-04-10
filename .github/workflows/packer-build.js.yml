@@ -104,7 +104,7 @@ jobs:
             echo "PASSWORD=${{ env.DB_PASSWORD }}\" >> /opt/webapp/.env
             echo "HOST=${{ env.CLOUD_SQL_INSTANCE_PRIVATE_IP }}\" >> /opt/webapp/.env
             echo "PORT=${{ env.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env
-            echo "DOMAIN_NAME=${{ env.PROD_DOMAIN_NAME }}" >> /opt/webapp/.env
+            echo "DOMAIN_NAME=${{ env.DOMAIN_NAME }}" >> /opt/webapp/.env
             echo "ENV=prod" >> /opt/webapp/.env
             echo "PUBSUB_TOPIC_NAME=${{ env.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env
             # Mark script as run by creating a file
