@@ -115,7 +115,7 @@ jobs:
             --region=$PROJECT_REGION \
             --subnet=$VM_TEMPLATE_SUBNET \
             --tags=$VM_TEMPLATE_TAGS \
-            --service-account= $VM_TEMPLATE_SERVICE_ACCOUNT \
+            --service-account=$VM_TEMPLATE_SERVICE_ACCOUNT \
             --scopes=$VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE \
             --metadata=startup-script=$'
             #!/bin/bash
