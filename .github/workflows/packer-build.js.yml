@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches: ["main"]
 
 jobs:
   build:
@@ -85,20 +83,14 @@ jobs:
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")" >> $GITHUB_ENV
 
-      # - name: Build Packer
-      #   id: packer_build
-      #   run: |
-      #     PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
-      #     echo "$PACKER_OUTPUT"
-      #     PACLER_IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
-      #     echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID"
-      #     echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID" >> $GITHUB_ENV
-
       - name: Build Packer
         id: packer_build
         run: |
-          echo "PACLER_IMAGE_ID=packer-1712723143"
-          echo "PACLER_IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
+          PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
+          echo "$PACKER_OUTPUT"
+          PACLER_IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
+          echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID"
+          echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         id: create_template
