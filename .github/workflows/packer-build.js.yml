@@ -149,7 +149,7 @@ jobs:
           TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
           echo "Updating MIG with instance template: $TEMPLATE_PATH"
           gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
-            --max-unavailable=1 \
+            --max-unavailable=0 \
             --version template=$TEMPLATE_PATH \
             --region $PROJECT_REGION \
             --type=proactive
