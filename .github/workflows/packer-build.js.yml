@@ -85,7 +85,7 @@ jobs:
       - name: Create Instance Template with New Image
         id: create_template
         run: |
-          KMS_KEY="projects/csye6225-dev-415023/locations/us-east1/keyRings/webapp-key-ring-85a33436/cryptoKeys/my-vm-key/cryptoKeyVersions/1"
+          KMS_KEY="projects/csye6225-dev-415023/locations/us-east1/keyRings/webapp-key-ring-85a33436/cryptoKeys/my-vm-key"
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
