@@ -137,7 +137,7 @@ jobs:
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
           echo "Instance template created with path: $TEMPLATE_PATH"
 
-      - name: Set Instance Group
+      - name: Set Instance Group to Managed Instance Group
         run: |
           gcloud compute instance-groups managed set-instance-template $VM_TEMPLATE_MIG_NAME \
           --template=$TEMPLATE_PATH \
@@ -154,6 +154,9 @@ jobs:
 
       - name: Wait for managed instance group refresh to complete
         run: |
-          gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
-            --version-target-reached \
-            --region $PROJECT_REGION
+          STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
+          while [[ $STATUS == 'UPDATING' ]]; do
+            echo "Instance group update in Progress..."
+            sleep 20
+            STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
+          done
