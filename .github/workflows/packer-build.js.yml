@@ -43,10 +43,10 @@ jobs:
 
       - name: Log Secrets from Google Secret Manager
         run: |
-          echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME")"
-          echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME")"
-          echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT")"
-          echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD")"
+          echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
+          echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
+          echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
+          echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
           echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
           echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
