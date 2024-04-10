@@ -85,19 +85,19 @@ jobs:
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")" >> $GITHUB_ENV
 
-      # - name: Build Packer
-      #   id: packer_build
-      #   run: |
-      #     PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
-      #     echo "$PACKER_OUTPUT"
-      #     IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
-      #     echo "IMAGE_ID=$IMAGE_ID"
-      #     echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
       - name: Build Packer
         id: packer_build
         run: |
-          echo "IMAGE_ID=packer-1712723143"
-          echo "IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
+          PACKER_OUTPUT=$(packer build -var-file="packer/variables.pkrvars.hcl" packer/packer-gcp.pkr.hcl)
+          echo "$PACKER_OUTPUT"
+          IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
+          echo "IMAGE_ID=$IMAGE_ID"
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+      # - name: Build Packer
+      #   id: packer_build
+      #   run: |
+      #     echo "IMAGE_ID=packer-1712723143"
+      #     echo "IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         id: create_template
@@ -137,16 +137,16 @@ jobs:
           echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
           echo "Instance template created with path: $TEMPLATE_PATH"
 
-      # - name: Update Managed Instance Group with New Template
-      #   run: |
-      #     TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
-      #     echo "Updating MIG with instance template: $TEMPLATE_PATH"
-      #     gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
-      #       --version template=$TEMPLATE_PATH \
-      #       --region $PROJECT_REGION
+      - name: Update Managed Instance Group with New Template
+        run: |
+          TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
+          echo "Updating MIG with instance template: $TEMPLATE_PATH"
+          gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
+            --version template=$TEMPLATE_PATH \
+            --region $PROJECT_REGION
 
-      # - name: Wait for managed instance group refresh to complete
-      #   run: |
-      #     gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
-      #       --version-target-reached \
-      #       --region $PROJECT_REGION
+      - name: Wait for managed instance group refresh to complete
+        run: |
+          gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
+            --version-target-reached \
+            --region $PROJECT_REGION
