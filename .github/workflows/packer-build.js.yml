@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches: ["main"]
 
 jobs:
   build:
@@ -54,14 +52,14 @@ jobs:
       #     echo "VM_TEMPLATE_SUBNET=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SUBNET" --format="value(payload.data)")"
       #     echo "VM_TEMPLATE_TAGS=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_TAGS" --format="value(payload.data)")"
 
-      #     # echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
-      #     # echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
-      #     # echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
-      #     # echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
-      #     # echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
-      #     # echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
-      #     # echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
-      #     # echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
+      #     echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")"
+      #     echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")"
+      #     echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")"
+      #     echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --format="value(payload.data)")"
+      #     echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
+      #     echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
+      #     echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
+      #     echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
 
       - name: Fetch Secrets from Google  Secret Manager
         run: |
@@ -93,11 +91,6 @@ jobs:
           IMAGE_ID=$(echo "$PACKER_OUTPUT" | grep 'A disk image was created' | grep -o "packer-[0-9]*")
           echo "IMAGE_ID=$IMAGE_ID"
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-      # - name: Build Packer
-      #   id: packer_build
-      #   run: |
-      #     echo "IMAGE_ID=packer-1712723143"
-      #     echo "IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         id: create_template
