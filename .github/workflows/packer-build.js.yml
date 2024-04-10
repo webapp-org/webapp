@@ -94,62 +94,62 @@ jobs:
           echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID"
           echo "PACLER_IMAGE_ID=$PACLER_IMAGE_ID" >> $GITHUB_ENV
 
-      # - name: Create Instance Template with New Image
-      #   id: create_template
-      #   run: |
-      #     TEMPLATE_NAME="webapp-template-${{ github.sha }}"
-      #     echo "Creating instance template with the image ID: $PACLER_IMAGE_ID"
-      #     TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
-      #       --machine-type=$VM_TEMPLATE_MACHINE_TYPE \
-      #       --image-project=$PROJECT_ID \
-      #       --image=$PACLER_IMAGE_ID \
-      #       --boot-disk-type=$VM_TEMPLATE_BOOT_DISK_TYPE \
-      #       --boot-disk-size=$VM_TEMPLATE_BOOT_DISK_SIZE \
-      #       --boot-disk-kms-key=$VM_KMS_KEY \
-      #       --instance-template-region=$PROJECT_REGION \
-      #       --region=$PROJECT_REGION \
-      #       --subnet=$VM_TEMPLATE_SUBNET \
-      #       --tags=$VM_TEMPLATE_TAGS \
-      #       --service-account=$VM_TEMPLATE_SERVICE_ACCOUNT \
-      #       --scopes=$VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE \
-      #       --metadata=startup-script=$'
-      #       #!/bin/bash
-      #       # Check if the script has already run
-      #       if [ -f "/opt/.env_configured" ]; then
-      #       exit 0
-      #       fi
-      #       # Populate the .env file
-      #       echo "DATABASE=${{ env.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env
-      #       echo "USERNAME=${{ env.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env
-      #       echo "PASSWORD=${{ env.DB_PASSWORD }}\" >> /opt/webapp/.env
-      #       echo "HOST=${{ env.CLOUD_SQL_INSTANCE_PRIVATE_IP }}\" >> /opt/webapp/.env
-      #       echo "PORT=${{ env.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env
-      #       echo "DOMAIN_NAME=${{ env.DOMAIN_NAME }}" >> /opt/webapp/.env
-      #       echo "ENV=prod" >> /opt/webapp/.env
-      #       echo "PUBSUB_TOPIC_NAME=${{ env.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env
-      #       # Mark script as run by creating a file
-      #       touch /opt/.env_configured' --format="value(selfLink)")
-      #     echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
-      #     echo "Instance template created with path: $TEMPLATE_PATH"
+      - name: Create Instance Template with New Image
+        id: create_template
+        run: |
+          TEMPLATE_NAME="webapp-template-${{ github.sha }}"
+          echo "Creating instance template with the image ID: $PACLER_IMAGE_ID"
+          TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
+            --machine-type=$VM_TEMPLATE_MACHINE_TYPE \
+            --image-project=$PROJECT_ID \
+            --image=$PACLER_IMAGE_ID \
+            --boot-disk-type=$VM_TEMPLATE_BOOT_DISK_TYPE \
+            --boot-disk-size=$VM_TEMPLATE_BOOT_DISK_SIZE \
+            --boot-disk-kms-key=$VM_KMS_KEY \
+            --instance-template-region=$PROJECT_REGION \
+            --region=$PROJECT_REGION \
+            --subnet=$VM_TEMPLATE_SUBNET \
+            --tags=$VM_TEMPLATE_TAGS \
+            --service-account=$VM_TEMPLATE_SERVICE_ACCOUNT \
+            --scopes=$VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE \
+            --metadata=startup-script=$'
+            #!/bin/bash
+            # Check if the script has already run
+            if [ -f "/opt/.env_configured" ]; then
+            exit 0
+            fi
+            # Populate the .env file
+            echo "DATABASE=${{ env.CLOUD_SQL_DATABASE_NAME }}" > /opt/webapp/.env
+            echo "USERNAME=${{ env.CLOUD_SQL_DATABASE_USER_NAME }}" >> /opt/webapp/.env
+            echo "PASSWORD=${{ env.DB_PASSWORD }}\" >> /opt/webapp/.env
+            echo "HOST=${{ env.CLOUD_SQL_INSTANCE_PRIVATE_IP }}\" >> /opt/webapp/.env
+            echo "PORT=${{ env.CLOUD_SQL_DATABASE_PORT }}" >> /opt/webapp/.env
+            echo "DOMAIN_NAME=${{ env.DOMAIN_NAME }}" >> /opt/webapp/.env
+            echo "ENV=prod" >> /opt/webapp/.env
+            echo "PUBSUB_TOPIC_NAME=${{ env.PUBSUB_TOPIC_NAME }}" >> /opt/webapp/.env
+            # Mark script as run by creating a file
+            touch /opt/.env_configured' --format="value(selfLink)")
+          echo "TEMPLATE_PATH=$TEMPLATE_PATH" >> $GITHUB_ENV
+          echo "Instance template created with path: $TEMPLATE_PATH"
 
-      # - name: Set Instance Group to Managed Instance Group
-      #   run: |
-      #     gcloud compute instance-groups managed set-instance-template $VM_TEMPLATE_MIG_NAME \
-      #     --template=$TEMPLATE_PATH \
-      #     --region=$PROJECT_REGION \
+      - name: Set Instance Group to Managed Instance Group
+        run: |
+          gcloud compute instance-groups managed set-instance-template $VM_TEMPLATE_MIG_NAME \
+          --template=$TEMPLATE_PATH \
+          --region=$PROJECT_REGION \
 
-      # - name: Update Managed Instance Group with New Template
-      #   run: |
-      #     TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
-      #     echo "Updating MIG with instance template: $TEMPLATE_PATH"
-      #     gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
-      #       --max-unavailable=0 \
-      #       --version template=$TEMPLATE_PATH \
-      #       --region $PROJECT_REGION \
-      #       --type=proactive
+      - name: Update Managed Instance Group with New Template
+        run: |
+          TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
+          echo "Updating MIG with instance template: $TEMPLATE_PATH"
+          gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
+            --max-unavailable=0 \
+            --version template=$TEMPLATE_PATH \
+            --region $PROJECT_REGION \
+            --type=proactive
 
-      # - name: Wait for managed instance group refresh to complete
-      #   run: |
-      #     gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
-      #       --version-target-reached \
-      #       --region $PROJECT_REGION
+      - name: Wait for managed instance group refresh to complete
+        run: |
+          gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
+            --version-target-reached \
+            --region $PROJECT_REGION
