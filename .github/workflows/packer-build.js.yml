@@ -48,13 +48,13 @@ jobs:
       #       DB_PASSWORD:db-password
       #       echo "DB_PASSWORD=$DB_PASSWORD"
 
-      - id: "secrets"
-        name: "Fetch Secrets from Secret Manager"
-        uses: "google-github-actions/get-secretmanager-secrets@v2"
-        with:
-          secrets: |-
-            PASSWORD:${{ secrets.GCP_PROJECT_ID }}/DB_PASSWORD
-            HOST:${{ secrets.GCP_PROJECT_ID }}/CLOUD_SQL_INSTANCE_PRIVATE_IP
+      # - id: "secrets"
+      #   name: "Fetch Secrets from Secret Manager"
+      #   uses: "google-github-actions/get-secretmanager-secrets@v2"
+      #   with:
+      #     secrets: |-
+      #       PASSWORD:${{ secrets.GCP_PROJECT_ID }}/DB_PASSWORD
+      #       HOST:${{ secrets.GCP_PROJECT_ID }}/CLOUD_SQL_INSTANCE_PRIVATE_IP
 
       # - id: 'secrets'
       #   name: 'Fetch Secrets from Secret Manager'
