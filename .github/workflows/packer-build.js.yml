@@ -80,7 +80,7 @@ jobs:
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
             --machine-type=e2-medium \
             --image-project=${{ secrets.GCP_PROJECT_ID }} \
-            --image=packer-1712628335 \
+            --image=$IMAGE_ID \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
             --boot-disk-kms-key=${{ env.VM_KMS_KEY}} \
