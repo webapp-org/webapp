@@ -156,7 +156,7 @@ jobs:
         run: |
           STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
           while [[ $STATUS == 'UPDATING' ]]; do
-            echo "Instance group update in Progress..."
+            echo "Instance group update in Progress.."
             sleep 20
             STATUS=$(gcloud compute instance-groups managed describe $VM_TEMPLATE_MIG_NAME --project=$PROJECT_ID --region=$PROJECT_REGION --format='value(currentActions)')
           done
