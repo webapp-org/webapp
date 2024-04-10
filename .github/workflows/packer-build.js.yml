@@ -50,6 +50,7 @@ jobs:
           echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")"
           echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")"
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")"
+          echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")"
 
       - name: Fetch Secrets from Google  Secret Manager
         run: |
@@ -60,6 +61,7 @@ jobs:
           echo "CLOUD_SQL_INSTANCE_PRIVATE_IP=$(gcloud secrets versions access latest --secret="CLOUD_SQL_INSTANCE_PRIVATE_IP" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "DOMAIN_NAME=$(gcloud secrets versions access latest --secret="DOMAIN_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "PUBSUB_TOPIC_NAME=$(gcloud secrets versions access latest --secret="PUBSUB_TOPIC_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_KMS_KEY=$(gcloud secrets versions access latest --secret="VM_KMS_KEY" --format="value(payload.data)")" >> $GITHUB_ENV
 
       # - name: Build Packer
       #   id: packer_build
@@ -85,7 +87,6 @@ jobs:
       - name: Create Instance Template with New Image
         id: create_template
         run: |
-          KMS_KEY="projects/csye6225-dev-415023/locations/us-east1/keyRings/webapp-key-ring-85a33436/cryptoKeys/my-vm-key"
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
@@ -94,7 +95,7 @@ jobs:
             --image=packer-1712628335 \
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
-            --boot-disk-kms-key=$KMS_KEY \
+            --boot-disk-kms-key={{ env.VM_KMS_KEY}} \
             --instance-template-region=${{ secrets.REGION }} \
             --region=${{ secrets.REGION }} \
             --subnet=webapp \
