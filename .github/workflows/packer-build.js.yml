@@ -45,6 +45,7 @@ jobs:
         run: |
           echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")"
           echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")"
+          echo "VM_TEMPLATE_MIG_NAME=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_MIG_NAME" --format="value(payload.data)")"
           echo "VM_TEMPLATE_MACHINE_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_MACHINE_TYPE" --format="value(payload.data)")"
           echo "VM_TEMPLATE_BOOT_DISK_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_TYPE" --format="value(payload.data)")"
           echo "VM_TEMPLATE_BOOT_DISK_SIZE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_SIZE" --format="value(payload.data)")"
@@ -67,6 +68,13 @@ jobs:
         run: |
           echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_MACHINE_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_MACHINE_TYPE" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_BOOT_DISK_TYPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_TYPE" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_BOOT_DISK_SIZE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_BOOT_DISK_SIZE" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_SERVICE_ACCOUNT=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SERVICE_ACCOUNT" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_SUBNET=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_SUBNET" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "VM_TEMPLATE_TAGS=$(gcloud secrets versions access latest --secret="VM_TEMPLATE_TAGS" --format="value(payload.data)")" >> $GITHUB_ENV
 
           echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
@@ -97,18 +105,18 @@ jobs:
           TEMPLATE_NAME="webapp-template-${{ github.run_id }}"
           echo "Creating instance template with the image ID: $IMAGE_ID"
           TEMPLATE_PATH=$(gcloud compute instance-templates create $TEMPLATE_NAME \
-            --machine-type=e2-medium \
+            --machine-type=$VM_TEMPLATE_MACHINE_TYPE \
             --image-project=$PROJECT_ID \
             --image=$IMAGE_ID \
-            --boot-disk-type=pd-balanced \
-            --boot-disk-size=50 \
+            --boot-disk-type=$VM_TEMPLATE_BOOT_DISK_TYPE \
+            --boot-disk-size=$VM_TEMPLATE_BOOT_DISK_SIZE \
             --boot-disk-kms-key=$VM_KMS_KEY \
             --instance-template-region=$PROJECT_REGION \
             --region=$PROJECT_REGION \
-            --subnet=webapp \
-            --tags=deny-all,allow-8080 \
-            --service-account=vm-service-account@csye6225-dev-415023.iam.gserviceaccount.com \
-            --scopes=cloud-platform \
+            --subnet=$VM_TEMPLATE_SUBNET \
+            --tags=$VM_TEMPLATE_TAGS \
+            --service-account= $VM_TEMPLATE_SERVICE_ACCOUNT \
+            --scopes=$VM_TEMPLATE_SERVICE_ACCOUNT_SCOPE \
             --metadata=startup-script=$'
             #!/bin/bash
             # Check if the script has already run
@@ -133,12 +141,12 @@ jobs:
       #   run: |
       #     TEMPLATE_PATH=${{ env.TEMPLATE_PATH }}
       #     echo "Updating MIG with instance template: $TEMPLATE_PATH"
-      #     gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
+      #     gcloud compute instance-groups managed rolling-action start-update $VM_TEMPLATE_MIG_NAME \
       #       --version template=$TEMPLATE_PATH \
       #       --region $PROJECT_REGION
 
       # - name: Wait for managed instance group refresh to complete
       #   run: |
-      #     gcloud compute instance-groups managed wait-until webapp-region-mig \
+      #     gcloud compute instance-groups managed wait-until $VM_TEMPLATE_MIG_NAME \
       #       --version-target-reached \
       #       --region $PROJECT_REGION
