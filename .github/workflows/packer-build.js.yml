@@ -58,8 +58,9 @@ jobs:
 
       - name: Fetch Secrets from Google  Secret Manager
         run: |
-          echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")"
-          echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")"
+          echo "PROJECT_ID=$(gcloud secrets versions access latest --secret="PROJECT_ID" --format="value(payload.data)")" >> $GITHUB_ENV
+          echo "PROJECT_REGION=$(gcloud secrets versions access latest --secret="PROJECT_REGION" --format="value(payload.data)")" >> $GITHUB_ENV
+
           echo "CLOUD_SQL_DATABASE_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "CLOUD_SQL_DATABASE_USER_NAME=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_USER_NAME" --format="value(payload.data)")" >> $GITHUB_ENV
           echo "CLOUD_SQL_DATABASE_PORT=$(gcloud secrets versions access latest --secret="CLOUD_SQL_DATABASE_PORT" --format="value(payload.data)")" >> $GITHUB_ENV
@@ -81,7 +82,7 @@ jobs:
         id: packer_build
         run: |
           echo "IMAGE_ID=packer-1712723143"
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "IMAGE_ID=packer-1712723143" >> $GITHUB_ENV
 
       - name: Create Instance Template with New Image
         id: create_template
@@ -95,8 +96,8 @@ jobs:
             --boot-disk-type=pd-balanced \
             --boot-disk-size=50 \
             --boot-disk-kms-key=${{ env.VM_KMS_KEY}} \
-            --instance-template-region=${{ secrets.REGION }} \
-            --region=${{ secrets.REGION }} \
+            --instance-template-region=$PROJECT_REGION \
+            --region=$PROJECT_REGION \
             --subnet=webapp \
             --tags=deny-all,allow-8080 \
             --service-account=vm-service-account@csye6225-dev-415023.iam.gserviceaccount.com \
@@ -127,10 +128,10 @@ jobs:
       #     echo "Updating MIG with instance template: $TEMPLATE_PATH"
       #     gcloud compute instance-groups managed rolling-action start-update webapp-region-mig \
       #       --version template=$TEMPLATE_PATH \
-      #       --region ${{ secrets.REGION }}
+      #       --region $PROJECT_REGION
 
       # - name: Wait for managed instance group refresh to complete
       #   run: |
       #     gcloud compute instance-groups managed wait-until webapp-region-mig \
       #       --version-target-reached \
-      #       --region ${{ secrets.REGION }}
+      #       --region $PROJECT_REGION
