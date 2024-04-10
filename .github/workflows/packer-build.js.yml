@@ -42,9 +42,15 @@ jobs:
         run: gcloud info
 
       - name: Access DB_PASSWORD Secret
+        uses: google-github-actions/get-secretmanager-secrets@v0.5.0 # Use the latest version available
+        with:
+          secrets: |
+            DB_PASSWORD:db-password
+            echo "DB_PASSWORD=$DB_PASSWORD"
+
+      - name: "Use the Secrets"
         run: |
-          DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD" --project="${{ secrets.GCP_PROJECT_ID }}")
-          echo "DB_PASSWORD=$DB_PASSWORD"
+          echo "Using DB_PASSWORD: $DB_PASSWORD"
 
       # - name: Build Packer
       #   id: packer_build
