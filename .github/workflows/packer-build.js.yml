@@ -139,16 +139,16 @@ jobs:
       #       --version-target-reached \
       #       --region ${{ secrets.REGION }}
 
-      - name: Get secrets from Secret Manager
-        id: get_secrets
-        uses: google-github-actions/get-secretmanager-secrets@v0
-        with:
-          secrets: |
-            CLOUD_SQL_INSTANCE_PRIVATE_IP:db-private-ip
-            DB_PASSWORD:db-password
+      # - name: Get secrets from Secret Manager
+      #   id: get_secrets
+      #   uses: google-github-actions/get-secretmanager-secrets@v0
+      #   with:
+      #     secrets: |
+      #       CLOUD_SQL_INSTANCE_PRIVATE_IP:db-private-ip
+      #       DB_PASSWORD:db-password
 
-      # Debugging step to echo the secrets - Use with caution!
-      - name: Echo Secrets for Debugging
-        run: |
-          echo "Database Private IP: ${{ steps.get_secrets.outputs.db-private-ip }}"
-          echo "Database Password: ${{ steps.get_secrets.outputs.db-password }}"
+      # # Debugging step to echo the secrets - Use with caution!
+      # - name: Echo Secrets for Debugging
+      #   run: |
+      #     echo "Database Private IP: ${{ steps.get_secrets.outputs.db-private-ip }}"
+      #     echo "Database Password: ${{ steps.get_secrets.outputs.db-password }}"
