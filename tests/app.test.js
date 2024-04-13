@@ -22,7 +22,7 @@ describe("Integration Tests", () => {
 
     // Post request to create a user
     const response = await supertest(app)
-      .post("/v1/user")
+      .post("/v2/user")
       .send(payload)
       .set("Accept", "application/json");
 
@@ -42,7 +42,7 @@ describe("Integration Tests", () => {
 
     // Get request to check created User
     const getUserResponse = await supertest(app)
-      .get("/v1/user/self")
+      .get("/v2/user/self")
       .set("Authorization", authHeader);
 
     expect(getUserResponse.status).toBe(200);
@@ -70,7 +70,7 @@ describe("Integration Tests", () => {
 
     // Put request to update user account
     const updateResponse = await supertest(app)
-      .put("/v1/user/self")
+      .put("/v2/user/self")
       .send(updatePayload)
       .set("Accept", "application/json")
       .set("Authorization", authToken);
@@ -85,7 +85,7 @@ describe("Integration Tests", () => {
 
     // Get request to check updated user
     const getUserResponse = await supertest(app)
-      .get("/v1/user/self")
+      .get("/v2/user/self")
       .set("Authorization", authToken);
 
     expect(getUserResponse.status).toBe(200);
