@@ -42,6 +42,12 @@ jobs:
       - name: Install node project
         run: npm ci
 
+      # Log the value of ENV
+      - name: Log ENV value
+        run: |
+          echo "ENV value: ${{ secrets.ENV }}"
+          echo "::add-mask::${{ secrets.ENV }}"
+
       # Command to run test cases
       - name: Run Integration Tests
         run: npm test
