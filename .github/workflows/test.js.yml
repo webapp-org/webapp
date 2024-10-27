@@ -9,7 +9,7 @@ on:
 
 env:
   HOST: ${{ secrets.HOST }}
-  PORT: ${{ secrets.PORT }}
+  PORT: ${{ secrets.PORT || '8080'}}
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
   DATABASE: ${{ secrets.DATABASE }}
