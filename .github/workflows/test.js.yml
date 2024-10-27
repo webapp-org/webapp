@@ -46,7 +46,7 @@ jobs:
       - name: Run Integration Tests
         run: |
           export HOST=${{ secrets.HOST }}
-          export PORT=${{ secrets.PORT }}
+          export PORT=${{ secrets.PORT || 8080 }}
           export USERNAME=${{ secrets.USERNAME }}
           export PASSWORD=${{ secrets.PASSWORD }}
           export DATABASE=${{ secrets.DATABASE }}
