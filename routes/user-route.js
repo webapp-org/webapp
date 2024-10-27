@@ -24,7 +24,7 @@ const checkDBConnection = async (req, res, next) => {
   }
 };
 
-// v1/user path payload and request check middleware
+// v2/user path payload and request check middleware
 const validatePostUserPayload = (req, res, next) => {
   // Check if request has query parameters
   if (Object.keys(req.query).length !== 0) {
@@ -42,7 +42,7 @@ const validatePostUserPayload = (req, res, next) => {
   next();
 };
 
-// v1/user/self path payload and request check middleware
+// v2/user/self path payload and request check middleware
 const validateAuthenticatedUserPayload = (req, res, next) => {
   if (req.method !== "PUT" && req.method !== "GET") {
     return res.status(405).json();
