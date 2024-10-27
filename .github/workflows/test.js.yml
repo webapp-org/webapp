@@ -44,4 +44,11 @@ jobs:
 
       # Command to run test cases
       - name: Run Integration Tests
-        run: npm test
+        run: |
+          export HOST=${{ secrets.HOST }}
+          export PORT=${{ secrets.PORT }}
+          export USERNAME=${{ secrets.USERNAME }}
+          export PASSWORD=${{ secrets.PASSWORD }}
+          export DATABASE=${{ secrets.DATABASE }}
+          export ENV=${{ secrets.ENV }}
+          npm test
