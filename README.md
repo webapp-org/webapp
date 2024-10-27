@@ -146,20 +146,20 @@ In this assignment, the primary objective is to expand the API functionality by 
 
 #### Create User
 
-- The POST API at /v1/user initiates the creation of a new user and provides relevant responses for different scenarios:
+- The POST API at /v2/user initiates the creation of a new user and provides relevant responses for different scenarios:
   - Responds with 400 for missing fields or an invalid body.
   - Responds with 409 if the username already exists.
   - Handles other potential errors with an internal server error (500).
 
 #### Get self User
 
-- The GET API at /v1/user/self verifies the presence of a basic authentication token through middleware.
+- The GET API at /v2/user/self verifies the presence of a basic authentication token through middleware.
   - If authorized, returns user data.
   - If unauthorized, sends an unauthorized message with a 400 status code.
 
 #### Update self user
 
-- The PUT API at /v1/user/self checks for the presence of updatable fields along with an authentication token.
+- The PUT API at /v2/user/self checks for the presence of updatable fields along with an authentication token.
   - If authorized, updates the user data accordingly.
   - If unauthorized, sends an unauthorized message with a 400 status code.
 
